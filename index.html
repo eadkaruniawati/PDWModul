@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Media Digital Destinasi Wisata</title>
+<style>
+:root{
+  /* palet terang — sama dengan modul, monograf, dan deck mata kuliah */
+  --navy:#1F3864; --navy-t:#3B5580; --emas:#C9A227; --emas2:#EFE0AE; --emas-t:#8A6F16;
+  --tajuk:#1F3864; --ice:#EAF0F6; --ground:#FAF5E8; --permukaan:#FFFFFF; --tepi2:#E4D9BE;
+  --tinta:#1A1A1A; --redup:#5A6472; --garis:#C8D3E2;
+  --hijau:#2F6B44; --merah:#A4553A;
+  --sorot:#FBEFD6; --benar:#E6F0E8; --salah:#F6E4DE;
+  --judul-f:Cambria,"Bookman Old Style",Georgia,serif;
+  --isi-f:Calibri,"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --tajuk:#A9C6F2; --ice:#1E2A3B; --ground:#131922; --permukaan:#1B2330; --tepi2:#333E52;
+    --tinta:#E8EDF5; --redup:#9AA8BC; --garis:#2E3A4D; --emas:#D9B64A; --emas2:#4A3F1C;
+    --emas-t:#D9B64A; --hijau:#7FBF96; --merah:#D79A80;
+    --sorot:#2E2A16; --benar:#1E3326; --salah:#3A2620;
+  }
+}
+:root[data-theme="dark"]{
+  --tajuk:#A9C6F2; --ice:#1E2A3B; --ground:#131922; --permukaan:#1B2330; --tepi2:#333E52;
+  --tinta:#E8EDF5; --redup:#9AA8BC; --garis:#2E3A4D; --emas:#D9B64A; --emas2:#4A3F1C;
+  --emas-t:#D9B64A; --hijau:#7FBF96; --merah:#D79A80;
+  --sorot:#2E2A16; --benar:#1E3326; --salah:#3A2620;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--isi-f);font-size:16px;line-height:1.6;color:var(--tinta);background:var(--ground)}
+a{color:var(--tajuk)}
+h1,h2,h3,h4{font-family:var(--judul-f);color:var(--tajuk);margin:0 0 .5rem;text-wrap:balance}
+h1{font-size:1.95rem;line-height:1.2}
+h2{font-size:1.4rem;margin-top:2rem}
+h3{font-size:1.12rem;margin-top:1.4rem}
+.kicker{font-size:.76rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--emas-t);margin-bottom:.35rem}
+
+/* tata letak */
+.bungkus{display:flex;min-height:100vh;align-items:flex-start}
+nav{width:250px;flex:0 0 250px;background:var(--navy);color:#DCE6F5;padding:1.1rem 0 2rem;position:sticky;top:env(safe-area-inset-top,0px);max-height:100vh;overflow-y:auto}
+nav .merek{padding:0 1.1rem 1rem;border-bottom:1px solid rgba(255,255,255,.14);margin-bottom:.7rem}
+nav .merek b{display:block;font-family:var(--judul-f);font-size:1.12rem;color:#fff;line-height:1.25}
+nav .merek span{font-size:.76rem;color:#93A8C7;letter-spacing:.08em}
+nav .kel{padding:.9rem 1.1rem .3rem;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--emas)}
+nav button{display:block;width:100%;text-align:left;background:none;border:0;color:#DCE6F5;font:inherit;font-size:.9rem;padding:.42rem 1.1rem;cursor:pointer;border-left:3px solid transparent}
+nav button:hover{background:rgba(255,255,255,.07)}
+nav button:focus-visible{outline:2px solid var(--emas);outline-offset:-2px}
+nav button.aktif{background:rgba(255,255,255,.12);border-left-color:var(--emas);color:#fff;font-weight:600}
+main{flex:1;min-width:0;padding-inline:clamp(16px,4vw,48px);padding-block:2rem 5rem;background:var(--ground)}
+.halaman{display:none;max-width:1000px;margin:0 auto}
+.halaman.tampil{display:block}
+
+/* komponen */
+.kartu{background:var(--permukaan);border:1px solid var(--garis);border-radius:10px;padding:1.05rem 1.25rem;margin:1rem 0}
+.kartu.ice{background:var(--ice)}
+.kartu.krem{background:var(--ground);border-color:var(--tepi2)}
+.kartu.navy{background:var(--navy);border-color:var(--navy);color:#E4EDF9}
+.kartu.navy h3,.kartu.navy h4{color:#fff}
+.kartu.navy .kicker{color:var(--emas2)}
+.pita{border-left:5px solid var(--emas)}
+.pita-navy{border-left:5px solid var(--navy)}
+.garis-emas{width:70px;height:3px;background:var(--emas);margin:.55rem 0 1.1rem}
+ol.num,ul.tik{padding-left:0;list-style:none;margin:.5rem 0}
+ol.num li,ul.tik li{position:relative;padding-left:2rem;margin-bottom:.5rem}
+ol.num{counter-reset:n}
+ol.num li::before{counter-increment:n;content:counter(n);position:absolute;left:0;top:.12rem;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--emas);color:#1F3864;font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+ul.tik li::before{content:"·";position:absolute;left:.5rem;top:-.1rem;color:var(--emas);font-size:1.6rem;line-height:1}
+.gulir{overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.92rem;background:var(--permukaan)}
+th,td{border:1px solid var(--garis);padding:.5rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-family:var(--judul-f);font-weight:700}
+tbody tr:nth-child(even){background:var(--ice)}
+.lencana{display:inline-block;background:var(--emas2);color:var(--tajuk);border-radius:5px;padding:.1rem .5rem;font-size:.78rem;font-weight:700}
+.redup{color:var(--redup)}
+.kecil{font-size:.86rem}
+input[type=text],input[type=number],textarea,select{font:inherit;font-size:.92rem;width:100%;padding:.4rem .5rem;border:1px solid var(--garis);border-radius:6px;background:var(--ground);color:var(--tinta)}
+textarea{min-height:5rem;resize:vertical}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible,.opsi:focus-visible{outline:2px solid var(--emas);outline-offset:1px}
+button.tombol{font:inherit;font-size:.9rem;font-weight:600;border:0;border-radius:7px;padding:.5rem 1rem;cursor:pointer;background:var(--navy);color:#fff}
+button.tombol.kedua{background:var(--emas2);color:var(--tajuk);border:1px solid var(--emas)}
+button.tombol:hover{filter:brightness(1.12)}
+.deret{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:.9rem}
+.hasil{font-family:var(--judul-f);font-size:1.5rem;font-weight:700;color:var(--tajuk);font-variant-numeric:tabular-nums}
+.peringatan{background:var(--sorot);border-left:5px solid var(--emas);padding:.7rem .9rem;border-radius:0 7px 7px 0;margin:.7rem 0;font-size:.92rem}
+.kisi2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.9rem}
+.kisi3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.9rem}
+label.pilih{display:flex;gap:.55rem;align-items:flex-start;padding:.3rem 0;cursor:pointer;font-size:.93rem}
+label.pilih input{margin-top:.28rem;flex:0 0 auto;width:auto;accent-color:var(--navy)}
+.radio-deret{display:flex;gap:.8rem;flex-wrap:wrap}
+.radio-deret label{display:flex;gap:.28rem;align-items:center;font-size:.9rem;cursor:pointer}
+.radio-deret input{width:auto;accent-color:var(--navy)}
+.bar{height:10px;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden;margin:.45rem 0}
+.bar i{display:block;height:100%;background:var(--emas);width:0;transition:width .25s}
+.plot{width:100%;max-width:460px;height:auto;border:1px solid var(--garis);border-radius:8px;background:#fff}
+.soal{border:1px solid var(--garis);border-radius:9px;background:var(--permukaan);padding:.9rem 1.05rem;margin:.8rem 0}
+.soal .tanya{font-weight:600;margin-bottom:.55rem}
+.opsi{display:block;border:1px solid var(--garis);border-radius:7px;padding:.45rem .65rem;margin:.3rem 0;cursor:pointer;font-size:.93rem;background:var(--ground)}
+.opsi:hover{background:var(--ice)}
+.opsi.benar{background:var(--benar);border-color:var(--hijau);font-weight:600}
+.opsi.salah{background:var(--salah);border-color:var(--merah)}
+.opsi.mati{pointer-events:none}
+.bahas{font-size:.88rem;color:var(--redup);font-style:italic;margin-top:.5rem;border-top:1px dashed var(--garis);padding-top:.5rem}
+.papan{position:sticky;top:env(safe-area-inset-top,0px);background:var(--ground);padding:.6rem 0;z-index:5;border-bottom:1px solid var(--tepi2);display:flex;gap:.7rem;flex-wrap:wrap;align-items:center}
+@media (max-width:860px){
+  .bungkus{flex-direction:column}
+  nav{width:100%;flex:none;position:static;max-height:none}
+  main{padding-block:1.4rem 4rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  nav{display:none} main{padding:0}
+  .halaman{display:block!important;page-break-after:always}
+  body{background:#fff;color:#000}
+  .tombol,.papan{display:none}
+}
+</style>
+</head>
+<body>
+<div class="bungkus">
+<nav id="nav"></nav>
+<main id="utama"></main>
+</div>
+<script>
+const D = {"BLOK":[{"no":1,"mg":"Minggu 1","judul":"Objek Wisata, Daya Tarik Wisata, dan Destinasi","sub":"Sub-CPMK-1: Menjelaskan dan membedakan objek wisata, daya tarik wisata, dan destinasi wisata.","ind":["Ketepatan menjelaskan pengertian objek/daya tarik wisata dan destinasi wisata.","Ketepatan membedakan ketiga konsep beserta implikasi pengelolaannya.","Ketepatan pertimbangan dalam memilih daya tarik wisata jangkar untuk proyek semester."],"bk":"BK-1 — Konsep objek wisata, daya tarik wisata, dan destinasi wisata; kedudukan pengelolaan destinasi dalam sistem kepariwisataan.","bobot":"3","agenda":["Tiga istilah yang sering tertukar","Apa yang dimaksud hukum Indonesia","Kedudukan pengelolaan destinasi","Menetapkan DTW jangkar kelompok"],"poin":[["Objek wisata","Benda atau tempatnya sendiri — air terjun, candi, pantai. Ia ada tanpa perlu ada yang mengelola."],["Daya tarik wisata","Objek yang sudah punya keunikan, keindahan, dan nilai yang menjadi sasaran kunjungan. Sudah ada niat menarik orang."],["Destinasi pariwisata","Kawasan geografis yang di dalamnya terdapat daya tarik, fasilitas umum, fasilitas pariwisata, aksesibilitas, dan masyarakat yang saling terkait."]],"pustaka":["Pustaka 10 — UU 10/2009 Pasal 1 dan Pasal 7","Pustaka 12 — Perda Kepri 2/2012 Pasal 1","Pustaka 13 — Perda Bintan 4/2015 Pasal 1","Pustaka 3 — UNWTO §1.1 hlm. 1–2","Pustaka 1 — Morrison Bab 1","Pustaka 4 — Cooper Bab 2"],"alat":"Bank soal kuis konsep dasar","butir":[{"n":"Mentimeter","k":"awan kata pembuka: \"Sebutkan satu destinasi wisata.\" Simpan hasilnya, buka kembali di akhir pertemuan setelah tiga istilah dibedakan."},{"n":"Quizizz atau Kahoot","k":"sepuluh butir kuis konsep objek, daya tarik, dan destinasi."},{"n":"LMS","k":"bahan bacaan Pasal 1 dan Pasal 7 UU 10/2009, forum diskusi, dan formulir pendaftaran DTW jangkar tiap kelompok."}],"catatan":"Formulir pendaftaran DTW jangkar ditutup pada akhir pertemuan. Kelompok yang belum menetapkan tidak bisa memulai Tugas-1.","tugas":{"judul":"Yang dikerjakan setelah kelas ini","isi":["Tetapkan satu DTW jangkar kelompok di Bintan atau Kepulauan Riau.","Periksa kelayakannya dengan Perda Kepri 2/2012 Pasal 12 dan Perda Bintan 4/2015 Pasal 12–13.","Pastikan bisa didatangi berulang, ada yang bisa diwawancarai, dan ada yang bisa dihitung.","Daftarkan pilihan kelompok melalui LMS."],"catatan":"Pilihan ini tidak bisa diganti di tengah semester."}},{"no":2,"mg":"Minggu 2–3","judul":"Tipologi dan Risiko Pengelolaan Daya Tarik Wisata","sub":"Sub-CPMK-2: Mengklasifikasikan jenis daya tarik wisata dan menganalisis karakteristik serta risiko pengelolaannya.","ind":["Ketepatan mengklasifikasikan daya tarik wisata alam, budaya, dan buatan.","Ketajaman menganalisis perbedaan karakteristik dan risiko pengelolaan tiap jenis.","Kelengkapan dan keterverifikasian data profil daya tarik wisata jangkar."],"bk":"BK-2 — Tipologi daya tarik wisata; karakteristik dan risiko pengelolaan daya tarik alam, budaya, dan buatan.","bobot":"7","agenda":["Tiga jenis menurut perda","Sumber daya inti tiap jenis","Risiko yang melekat pada tiap jenis","Tugas-1: Profil Klasifikasi DTW"],"poin":[["Daya tarik wisata alam","Bersumber dari bentang alam dan kehidupan di dalamnya. Sumber dayanya tidak bisa diproduksi ulang bila rusak."],["Daya tarik wisata budaya","Bersumber dari hasil karya dan kehidupan manusia. Pemiliknya adalah komunitas, bukan pengelola."],["Daya tarik wisata hasil buatan manusia","Sengaja dibangun untuk menarik kunjungan. Bisa diperbarui, tetapi menuntut investasi berkelanjutan."]],"pustaka":["Pustaka 12 — Perda Kepri 2/2012 Pasal 17–18","Pustaka 13 — Perda Bintan 4/2015 BAB IV Bagian Keempat","Pustaka 1 — Morrison Bab 5","Pustaka 4 — Cooper Bab 7","Pustaka 3 — UNWTO §5.7 hlm. 98–102","Pustaka 15, 16, 6 — kajian berlatar Bintan dan Lagoi","Pustaka 7 — Teguh hlm. 279–282"],"alat":"Repositori data daya tarik wisata","butir":[{"n":"LMS","k":"repositori data daya tarik wisata Kepulauan Riau dan tempat unggah Tugas-1."},{"n":"Padlet","k":"papan klasifikasi bersama: tiap mahasiswa menempelkan DTW jangkarnya pada kolom alam, budaya, atau buatan, lalu kelas membahas yang letaknya meragukan."},{"n":"Google Maps","k":"penandaan titik DTW jangkar seluruh kelas dalam satu peta bersama."}],"catatan":"Papan Padlet disimpan; pada minggu 11–12 dibuka lagi untuk memeriksa apakah penggolongan awal masih bertahan setelah mahasiswa mengenal destinasinya lebih dalam.","tugas":{"judul":"Tugas-1 — Profil Klasifikasi Daya Tarik Wisata","isi":["Individu, 800–1.000 kata, dikumpulkan pertemuan ke-3.","Isi: klasifikasi jenis, sumber daya inti, pengelola, pola kunjungan, risiko khas jenis itu.","Wajib memuat data primer hasil observasi sendiri.","Sekurang-kurangnya tiga sumber sekunder yang dapat diverifikasi."],"catatan":"Dinilai dengan rubrik D.1. Bacalah rubriknya sebelum menulis."}},{"no":3,"mg":"Minggu 4–5","judul":"Komponen 6A dan Siklus Hidup Destinasi","sub":"Sub-CPMK-3: Menganalisis kelengkapan komponen destinasi (6A) dan menentukan posisi destinasi dalam siklus hidup destinasi.","ind":["Kelengkapan audit komponen 6A pada DTW jangkar.","Ketepatan penentuan posisi tahap TALC disertai bukti pendukung.","Ketajaman menyimpulkan implikasi pengelolaan dari hasil audit."],"bk":"BK-3, BK-4 — Komponen destinasi 6A dan keterkaitannya; siklus hidup destinasi dan implikasi tiap tahap.","bobot":"8","agenda":["Kerangka enam A","Mengaudit komponen di lapangan","Tujuh tahap siklus hidup destinasi","Tugas-2: Audit 6A dan posisi TALC"],"poin":[["Attractions · Accessibility","Yang membuat orang mau datang, dan yang membuat mereka bisa sampai — rute, terminal, moda."],["Amenities · Ancillary services","Yang membuat mereka betah: akomodasi, jasa boga, ritel; dan yang menopang diam-diam: bank, sinyal, layanan kesehatan."],["Available packages · Activities","Apakah destinasi ini bisa dibeli sebagai produk, dan apa yang benar-benar dikerjakan orang selama di sana."]],"pustaka":["Pustaka 5 — Buhalis 2000 Tabel 1 (kerangka enam A)","Pustaka 8 — Butler 1980 Figure 1 hlm. 7 dan hlm. 7–9","Pustaka 1 — Morrison Figure 1.8 (pembanding sepuluh A)","Pustaka 3 — UNWTO §1.6 hlm. 16","Pustaka 4 — Cooper Bab 2 (The Evolving Destination)","Pustaka 12 Pasal 12 dan 18 · Pustaka 13 Pasal 12–13 dan Lampiran I"],"alat":"Lembar Audit Komponen 6A · Penentu Tahap Siklus Hidup Destinasi","butir":[{"n":"Lembar Audit Komponen 6A","k":"enam baris dengan kurungan penjelas tiap A, kolom temuan, bukti, dan nilai 0/1/2. Tersedia versi cetak (LK-1) dan versi interaktif."},{"n":"Penentu Tahap Siklus Hidup Destinasi","k":"daftar ciri tiap tahap Butler; mahasiswa mencentang yang disertai bukti, alat menampilkan tahap yang paling banyak terpenuhi beserta peringatan bila dua tahap seimbang."},{"n":"LMS","k":"unggah matriks audit dan bahan presentasi kelompok."}],"catatan":"Alat penentu tahap sengaja tidak memberi jawaban tunggal bila bukti terbagi. Tegaskan bahwa itu bukan kerusakan alat, melainkan gambaran destinasi yang memang sedang berpindah tahap.","tugas":{"judul":"Tugas-2 — Audit 6A dan Penentuan Posisi TALC","isi":["Kelompok. Keluaran: matriks audit, argumen penentuan tahap, presentasi 10 menit.","Pakai LK-1 (lembar audit 6A) dan LK-2 (lembar posisi TALC).","Tiga jenis bukti wajib: tren kunjungan, kondisi fasilitas, pola investasi.","Tutup dengan uji silang terhadap Perda Kepri Pasal 12 dan Perda Bintan Pasal 12–13."],"catatan":"Destinasi boleh menunjukkan ciri dua tahap sekaligus — jangan dipaksakan menjadi satu."}},{"no":4,"mg":"Minggu 6–7","judul":"Tata Kelola Destinasi dan Pemangku Kepentingan","sub":"Sub-CPMK-4: Menganalisis struktur, fungsi, dan payung regulasi organisasi pengelola destinasi (DMO). Sub-CPMK-5: Memetakan pemangku kepentingan pentahelix beserta kepentingan, pengaruh, dan potensi konfliknya.","ind":["Ketepatan menguraikan bentuk, fungsi, dan dasar hukum organisasi pengelola destinasi.","Ketajaman mengidentifikasi kesenjangan kelembagaan pada destinasi yang dikaji.","Kelengkapan identifikasi dan ketepatan penempatan pemangku kepentingan pada matriks kepentingan-pengaruh.","Ketajaman mengenali potensi konflik serta kepekaan terhadap kepentingan masyarakat lokal."],"bk":"BK-5, BK-6 — Tata kelola destinasi; DMO dan DMP; regulasi kepariwisataan nasional dan daerah; pentahelix; kemitraan dan resolusi konflik kepentingan.","bobot":"10","agenda":["Apa itu pengelolaan destinasi","DMO dalam kerangka hukum Indonesia","Pentahelix dan matriks kepentingan-pengaruh","Tugas-3 dan Tugas-4"],"poin":[["Destination Management Organization","Organisasi yang mengoordinasi pihak-pihak yang tidak saling memiliki. Ia jarang punya kewenangan memerintah."],["Destination Management Plan","Dokumen yang menyatakan ke mana destinasi hendak dibawa, oleh siapa, dan dengan ukuran apa."],["Lima model DMO","Government-Led, Public–Private Partnership, Private-Led, Community-Led, dan All-Inclusive Stakeholder-Led. Yang cocok ditentukan konteks destinasi, bukan selera."]],"pustaka":["Pustaka 10 — UU 10/2009 Pasal 7 dan Pasal 28–30","Pustaka 12 — Perda Kepri BAB VI Pasal 48–55; Pasal 24–25","Pustaka 13 — Perda Bintan Pasal 10 dan BAB VII","Pustaka 3 — UNWTO §1.2 hlm. 2–8 dan §1.3 hlm. 9","Pustaka 1 — Morrison Bab 6, 7, dan 8","Pustaka 5 — Buhalis Gambar 1 dan Tabel 2 · Pustaka 9 — GSTC A1, A4, A5, A6, A9","Pustaka 7 — Teguh hlm. 262–264, 266–267, dan 279–282 Tabel 7.14","Pustaka 17 — Bappenas Bab 4 hlm. 105–112 (pembiayaan)"],"alat":"Peta Pemangku Kepentingan Pentahelix","butir":[{"n":"Peta Pemangku Kepentingan Pentahelix","k":"lima kolom unsur pentahelix dan bidang matriks kepentingan-pengaruh; tiap pihak diseret ke posisinya, alat menandai pihak berkepentingan tinggi tetapi berpengaruh rendah."},{"n":"LMS","k":"dokumen regulasi (UU 10/2009, PP 50/2011, kedua perda), templat bagan kelembagaan, dan forum diskusi terstruktur."},{"n":"Google Jamboard atau Padlet","k":"papan simulasi forum pemangku kepentingan."}],"catatan":"Pihak yang ditandai alat sebagai berkepentingan tinggi tetapi berpengaruh rendah hampir selalu masyarakat sekitar. Jadikan temuan itu pembuka diskusi, bukan penutup.","tugas":{"judul":"Dua tugas sekaligus","isi":["Tugas-3 (individu, 800 kata): dasar hukum, struktur, kewenangan, pembiayaan, dan kesenjangan kelembagaan pengelola DTW jangkar. Disertai bagan.","Tugas-4 (kelompok): peta pentahelix, matriks kepentingan-pengaruh, tiga titik potensi konflik, usulan mekanisme koordinasi.","Tugas-4 dipaparkan dalam simulasi forum pemangku kepentingan.","Gunakan GSTC A1, A4, A5, A6, dan A9 sebagai daftar periksa kesenjangan."],"catatan":"Keduanya masuk ke Laporan Milestone 1 minggu depan."}},{"no":5,"mg":"Minggu 8","judul":"Project Milestone 1 — Laporan Audit Situasi Destinasi","sub":"Evaluasi Tengah Semester berbentuk Project Milestone 1: mengukur ketercapaian CPMK-1 dan CPMK-2 melalui Laporan Audit Situasi Destinasi.","ind":["Keterpaduan hasil audit 6A, penentuan posisi TALC, analisis kelembagaan, dan peta pemangku kepentingan dalam satu laporan.","Ketepatan penggunaan konsep dan kerangka analisis pengelolaan destinasi.","Kejelasan penyampaian kemajuan proyek dan tanggapan atas umpan balik."],"bk":"BK-3, BK-4, BK-5, BK-6 — Sintesis materi minggu ke-1 sampai ke-7 dalam bentuk Laporan Audit Situasi Destinasi.","bobot":"15","agenda":["Penyerahan laporan","Presentasi kemajuan proyek","Umpan balik dosen dan sejawat","Penetapan arah paruh kedua"],"poin":[["Bukan tugas baru","Laporan ini adalah Tugas-1 sampai Tugas-4 yang disatukan, dirapikan, dan dijadikan satu bacaan yang runtut."],["Yang dinilai: keterpaduan","Apakah temuan audit 6A berbicara dengan temuan kelembagaan. Apakah peta pemangku kepentingan menjelaskan mengapa fasilitas seperti itu kondisinya."],["Bagian yang menentukan","Sintesis situasi: tiga sampai lima masalah pengelolaan paling mendesak, seluruhnya berdasarkan bukti dari bagian sebelumnya."]],"pustaka":["Pustaka 3 — UNWTO §2.1 hlm. 27 dst.","Pustaka 7 — Teguh hlm. 237–244","Pustaka 2 — Ritchie & Crouch Bab 11 hlm. 249–258; hlm. 252, 255; tabel atribut hlm. 257–258","Pustaka 12 — Perda Kepri Pasal 12","Pustaka 13 — Perda Bintan Pasal 12–13 dan Lampiran II","Pustaka 17 — Bappenas hlm. 63 dan hlm. 48–49"],"alat":"Ruang unggah dan rubrik terbuka","butir":[{"n":"LMS","k":"unggah Laporan Audit Situasi Destinasi sebelum kelas dimulai, beserta bahan presentasi."},{"n":"Rubrik D.1 dibuka","k":"mahasiswa dapat melihat rubrik yang dipakai menilai laporannya sebelum, bukan sesudah."},{"n":"Lembar umpan balik daring","k":"kelompok lain mengisi satu catatan menguatkan dan satu catatan perbaikan untuk tiap presentasi."}],"catatan":"Umpan balik sejawat tidak dinilai, tetapi wajib diisi. Catatannya dibagikan kepada kelompok yang bersangkutan pada akhir pertemuan.","tugas":{"judul":"Jalannya pertemuan","isi":["Presentasi kemajuan 10 menit per kelompok, tanya jawab 5 menit.","Laporan diunggah ke LMS sebelum kelas dimulai.","Umpan balik diberikan langsung, dicatat kelompok untuk perbaikan.","Bobot 15% — dinilai dengan rubrik D.1 dan butir pertahanan lisan pada D.3."],"catatan":"Laporan menjadi bagian analisis situasi pada dokumen akhir, jadi perbaikan hari ini menghemat pekerjaan di minggu 13–14."}},{"no":6,"mg":"Minggu 9","judul":"Pemasaran, Positioning, dan Branding Destinasi","sub":"Sub-CPMK-6: Menganalisis strategi positioning, image, dan branding destinasi.","ind":["Ketepatan mengidentifikasi positioning dan citra destinasi saat ini.","Ketajaman menganalisis kesesuaian brand dengan sumber daya nyata destinasi.","Kelayakan usulan penajaman positioning."],"bk":"BK-7 — Pemasaran destinasi; positioning, image, dan branding; bauran promosi.","bobot":"5","agenda":["Apa yang dijual sebuah destinasi","Positioning, citra, dan merek","Ketika janji tidak sesuai kenyataan","Tugas-5: Analisis Positioning dan Branding"],"poin":[["Positioning","Tempat yang ingin ditempati destinasi di benak calon pengunjung, relatif terhadap destinasi lain."],["Image","Yang sebenarnya ada di benak orang — terbentuk dari cerita mulut ke mulut, berita, dan pengalaman, bukan hanya dari iklan."],["Brand","Janji yang dinyatakan destinasi. Merek yang tidak ditopang sumber daya nyata akan runtuh pada kunjungan pertama."]],"pustaka":["Pustaka 14 — Kotler Bab 17 hlm. 507–548 (510–518, 513, 527–535, 536–538)","Pustaka 1 — Morrison Bab 3, 10, 12, dan 13","Pustaka 3 — UNWTO Bab 3 hlm. 41 dst.","Pustaka 2 — Ritchie & Crouch Bab 9 hlm. 183–232","Pustaka 5 — Buhalis §7.1–§7.3 dan Tabel 3","Pustaka 12 Pasal 29–36 · Pustaka 13 BAB V · Pustaka 9 — GSTC A7"],"alat":"Bank materi promosi destinasi","butir":[{"n":"LMS","k":"bank materi promosi destinasi Kepulauan Riau: tangkapan layar situs, unggahan media sosial, dan pindaian brosur."},{"n":"Mentimeter","k":"jajak pendapat cepat: \"Setelah melihat materi promosi ini, apa yang kalian bayangkan akan ditemukan di sana?\" Hasilnya dibandingkan dengan temuan audit 6A."},{"n":"Canva","k":"templat penajaman positioning untuk usulan Tugas-5."}],"catatan":"Jajak pendapat Mentimeter inilah inti pertemuan: selisih antara yang dibayangkan pemirsa dan yang benar-benar ada di lapangan adalah jarak antara janji dan kenyataan.","tugas":{"judul":"Tugas-5 — Analisis Positioning dan Branding","isi":["Individu, 800 kata. Objek: materi promosi resmi destinasi — situs, media sosial, brosur.","Simpulkan positioning dan citra yang sedang dibangun.","Nilai kesesuaiannya dengan sumber daya nyata yang kalian temukan pada audit 6A.","Usulkan penajaman positioning. Lampirkan bukti materi promosi."],"catatan":"Di sinilah hasil audit minggu 4–5 terbayar. Bandingkan janji dengan temuan."}},{"no":7,"mg":"Minggu 10","judul":"Daya Dukung dan Manajemen Pengunjung","sub":"Sub-CPMK-7: Menganalisis daya dukung dan merumuskan rekomendasi manajemen pengunjung.","ind":["Ketepatan mengestimasi daya dukung fisik daya tarik wisata beserta kejelasan asumsinya.","Ketajaman menganalisis daya dukung ekologis dan sosial.","Kelayakan rekomendasi manajemen pengunjung dan zonasi."],"bk":"BK-8 — Daya dukung fisik, ekologis, dan sosial; manajemen pengunjung dan zonasi.","bobot":"6","agenda":["Tiga jenis daya dukung","Menghitung daya dukung fisik","Zonasi dan pengaturan arus","Tugas-6: Perhitungan Daya Dukung"],"poin":[["Daya dukung fisik","Berapa orang yang muat secara nyaman. Dihitung dari luas area efektif, ruang per pengunjung, dan faktor rotasi harian."],["Daya dukung ekologis","Pada jumlah berapa lingkungan mulai rusak. Tandanya: jalur terkikis, vegetasi rusak, perilaku satwa berubah."],["Daya dukung sosial","Pada jumlah berapa penduduk mulai terganggu, dan pada kepadatan berapa pengalaman berkunjung mulai menurun mutunya."]],"pustaka":["Pustaka 2 — Ritchie & Crouch Bab 10 hlm. 246","Pustaka 4 — Cooper Bab 4 (Carrying Capacity)","Pustaka 3 — UNWTO §1.5.3 hlm. 15, §1.9 hlm. 20, Bab 6 mulai hlm. 109","Pustaka 1 — Morrison Bab 9 (Visitor management)","Pustaka 9 — GSTC A8, C6, D2, D3","Pustaka 7 — Teguh hlm. 237–244","Pustaka 13 — Perda Bintan BAB IV Bagian Kelima dan Keenam"],"alat":"Kalkulator Daya Dukung","butir":[{"n":"Kalkulator Daya Dukung","k":"tiga kolom isian (luas area efektif, ruang per pengunjung, faktor rotasi harian) dan satu kolom wajib berisi asumsi; hasil tidak muncul sebelum kolom asumsi terisi."},{"n":"Google Sheets","k":"lembar bersama perhitungan seluruh kelompok agar angka bisa saling dibandingkan."},{"n":"LMS","k":"unggah LK-3 beserta foto pengukuran di lapangan."}],"catatan":"Kolom asumsi sengaja dijadikan syarat. Mahasiswa yang terbiasa langsung mengejar angka akan tertahan di sini, dan itu memang maksudnya.","tugas":{"judul":"Tugas-6 — Perhitungan Daya Dukung","isi":["Individu. Pakai LK-3.","Hitung daya dukung fisik; telaah daya dukung ekologis dan sosial secara kualitatif.","Tentukan mana pembatas yang paling ketat.","Rumuskan tiga rekomendasi manajemen pengunjung dan zonasi — masing-masing menyebut tindakan, pelaksana, dan indikator keberhasilan."],"catatan":"Sandingkan dengan GSTC A8; bila tapaknya alam atau berpenghuni satwa, tambahkan D2 dan D3."}},{"no":8,"mg":"Minggu 11–12","judul":"Dampak Pariwisata dan Kriteria Keberlanjutan","sub":"Sub-CPMK-8: Mengevaluasi dampak pariwisata dan penerapan prinsip pariwisata berkelanjutan pada daya tarik wisata jangkar.","ind":["Ketepatan menurunkan kriteria evaluasi dari GSTC dan regulasi nasional.","Mutu dan keterverifikasian bukti pendukung penilaian.","Ketajaman menimbang pertukaran kepentingan ekonomi, sosial, dan lingkungan.","Kemampuan mempertahankan penilaian menghadapi sanggahan."],"bk":"BK-8 — Dampak ekonomi, sosial-budaya, dan lingkungan pariwisata; prinsip dan kriteria pariwisata berkelanjutan (GSTC).","bobot":"12","agenda":["Tiga ranah dampak","Kriteria GSTC dan indikator kinerjanya","Menurunkan kriteria sendiri","Tugas-7 dan forum evaluasi destinasi"],"poin":[["Dampak ekonomi","Lapangan kerja, pendapatan rumah tangga, dan kebocoran. Yang menikmati manfaat belum tentu yang menanggung biayanya."],["Dampak sosial-budaya","Perubahan interaksi, efek demonstrasi, dan komodifikasi. Terasa perlahan dan sulit dibalik."],["Dampak lingkungan","Yang paling mudah diukur dan paling sering diabaikan sampai biayanya menjadi mahal."]],"pustaka":["Pustaka 9 — GSTC A3 dan seluruh Bagian B, C, dan D","Pustaka 4 — Cooper Bab 3, 5, dan 6","Pustaka 2 — Ritchie & Crouch Bab 2 hlm. 33–59, khusus hlm. 44–48","Pustaka 3 — UNWTO §1.5 hlm. 12–15","Pustaka 12 — Perda Kepri Pasal 46–47","Pustaka 15 — Morita 2018 (Lagoi dan Desa Sebong Pereh) · Pustaka 16 — Rahayu & Ozali 2024","Pustaka 7 — Teguh hlm. 229–236, 248–251, dan 265","Pustaka 17 — Bappenas hlm. 93–102 dan angka target 2030"],"alat":"Lembar Evaluasi Keberlanjutan GSTC","butir":[{"n":"Lembar Evaluasi Keberlanjutan GSTC","k":"daftar 38 kriteria dalam empat bagian sebagai kumpulan pilihan; kelompok memilih delapan sampai dua belas, alat memperingatkan bila ada bagian yang belum terwakili."},{"n":"LMS","k":"dokumen GSTC Destination Criteria v2.0 dan forum evaluasi destinasi."},{"n":"Padlet","k":"papan forum: tiap kelompok menempelkan penilaian dan bukti dari sudut pandang pihak yang diperankannya."}],"catatan":"Peringatan \"ada bagian yang belum terwakili\" bukan larangan. Kelompok boleh melanjutkan asal bisa menjelaskan mengapa bagian itu tidak relevan bagi DTW jangkarnya.","tugas":{"judul":"Tugas-7 — Evaluasi Keberlanjutan","isi":["Kelompok, dua pertemuan. Pakai LK-4.","Turunkan sendiri kriteria evaluasi dari GSTC dan regulasi nasional.","Pertahankan hasilnya di forum evaluasi destinasi — tiap kelompok berperan sebagai satu pihak berkepentingan.","Bobot 12%, dinilai dengan rubrik D.2."],"catatan":"Yang dinilai bukan siapa paling keras bersuara, melainkan siapa paling jujur menimbang pertukaran kepentingan."}},{"no":9,"mg":"Minggu 13–14","judul":"Merancang Rencana Pengelolaan","sub":"Sub-CPMK-9: Merancang dokumen rencana pengelolaan daya tarik wisata terpilih.","ind":["Kelengkapan dan koherensi komponen rencana pengelolaan.","Kelayakan implementasi ditinjau dari sumber daya, waktu, dan kelembagaan di Kepulauan Riau.","Keberpihakan rencana pada kelestarian lingkungan dan kepentingan masyarakat lokal."],"bk":"BK-9 — Perencanaan pengelolaan daya tarik wisata: analisis situasi, tujuan, program prioritas, indikator kinerja (KPI), pembiayaan, dan mitigasi risiko.","bobot":"14","agenda":["Kerangka dokumen rencana","Dari masalah menjadi program prioritas","Indikator kinerja, pembiayaan, mitigasi risiko","Tugas-8: Draf Sustainable Destination Management Plan"],"poin":[["Analisis situasi","Bukan bab pembuka basa-basi. Setiap program yang kalian usulkan harus bisa ditunjuk asal masalahnya di bagian ini."],["Program prioritas","Tiga sampai lima, bukan dua puluh. Prioritas berarti memilih, dan memilih berarti ada yang tidak dikerjakan."],["Indikator kinerja","Satu sampai dua per program. Ambil rumusannya dari indikator kinerja GSTC — sudah tersedia, tidak perlu dikarang."]],"pustaka":["Pustaka 3 — UNWTO §1.10 hlm. 25, §1.11 hlm. 26, §2.2–§2.3 hlm. 36 dst.","Pustaka 1 — Morrison Bab 2 (Destination planning)","Pustaka 2 — Ritchie & Crouch Bab 8 hlm. 145–182","Pustaka 6 — Karuniawati 2026, lima pola wisata Langur Bintan","Pustaka 7 — Teguh hlm. 244–245 dan 256–262","Pustaka 9 — GSTC A2, A3, A10, A11","Pustaka 12 Pasal 15–16, 26–27, 56 · Pustaka 13 Pasal 39 dan Bagian Kedelapan","Pustaka 17 — Bappenas hlm. 5 (BAU lawan intervensi)"],"alat":"Daftar Periksa Kelengkapan Dokumen Rencana","butir":[{"n":"Daftar Periksa Kelengkapan Dokumen Rencana","k":"sembilan butir wajib; kelompok mencentang sendiri, alat menandai butir yang masih kosong."},{"n":"Google Docs","k":"penyusunan draf bersama dengan riwayat suntingan terbuka, sehingga kontribusi tiap anggota terlihat."},{"n":"LMS","k":"penyerahan bertahap draf pada tiap sesi project coaching."}],"catatan":"Riwayat suntingan Google Docs dipakai menilai kriteria kolaborasi. Sampaikan hal ini sejak awal, bukan setelah dokumen selesai.","tugas":{"judul":"Tugas-8 — Draf rencana pengelolaan","isi":["Kelompok, 10–15 halaman. Diserahkan bertahap dalam sesi project coaching.","Analisis situasi diambil dari Laporan Milestone 1 yang sudah diperbaiki, ditambah Tugas-5, 6, dan 7.","Tujuan wajib terukur dan berjangka waktu.","Bobot 14%, dinilai dengan rubrik D.3."],"catatan":"Contoh rancangan yang berangkat dari data lapangan: lima pola wisata Langur Bintan di kawasan Lagoi (Pustaka 6)."}},{"no":10,"mg":"Minggu 15","judul":"Mengomunikasikan Rencana kepada Pemangku Kepentingan","sub":"Sub-CPMK-10: Mempresentasikan dan mempertahankan rancangan pengelolaan kepada pemangku kepentingan.","ind":["Kejelasan dan keruntutan penyampaian rencana.","Kekuatan alasan di balik pilihan program yang diusulkan.","Kemampuan menanggapi sanggahan dari sudut pandang pemangku kepentingan yang berbeda."],"bk":"BK-9 — Teknik komunikasi rencana pengelolaan kepada pemangku kepentingan.","bobot":"5","agenda":["Siapa yang mendengarkan dan apa yang mereka cari","Menyusun paparan yang bisa dipertahankan","Final pitching","Perbaikan dokumen sebelum sidang"],"poin":[["Kenali pendengarnya","Pemerintah mencari keselarasan kebijakan. Pengusaha mencari kelayakan. Masyarakat mencari manfaat dan jaminan. Satu paparan harus menjawab ketiganya."],["Pimpin dengan masalah","Bukan dengan profil destinasi. Pendengar sudah tahu tempatnya; yang belum mereka tahu adalah apa yang salah dan apa usul kalian."],["Siapkan asal setiap angka","Pertanyaan yang paling sering menjatuhkan kelompok bukan yang sulit, melainkan: \"Angka ini dari mana?\""]],"pustaka":["Pustaka 3 — UNWTO §1.11 daftar periksa hlm. 26","Pustaka 1 — Morrison Bab 7 dan Bab 11","Pustaka 5 — Buhalis Tabel 2","Pustaka 7 — Teguh hlm. 262–264","Pustaka 12 — Perda Kepri Pasal 60","Pustaka 13 — Perda Bintan Pasal 40"],"alat":"Perekaman latihan dan umpan balik","butir":[{"n":"Telepon pintar mahasiswa","k":"perekaman latihan pitching; rekaman diputar dan dibahas bersama."},{"n":"Daftar periksa strategi UNWTO halaman 26","k":"disalin menjadi daftar pertanyaan daring; kelompok lain mengajukan pertanyaan dari daftar itu secara acak."},{"n":"LMS","k":"unggah dokumen yang sudah diperbaiki sebelum sidang."}],"catatan":"Memutar rekaman sendiri lebih efektif daripada dikoreksi dosen. Sediakan waktu cukup untuk itu.","tugas":{"judul":"Final pitching","isi":["Paparan 10 menit per kelompok, tanggapan 10 menit.","Umpan balik dari dosen dan kelompok lain dicatat untuk perbaikan.","Dokumen diperbaiki dan diserahkan ulang sebelum sidang minggu ke-16.","Bobot 5%."],"catatan":"Perda Kepri Pasal 60 dan Perda Bintan Pasal 40 tentang pengawasan dan pengendalian sering menjadi bahan pertanyaan panel."}},{"no":11,"mg":"Minggu 16","judul":"Final Project Defense","sub":"Evaluasi Akhir Semester berbentuk Final Project Defense: mengukur ketercapaian CPMK-3 dan CPMK-4 melalui produk akhir.","ind":["Mutu akhir dokumen Sustainable Destination Management Plan.","Ketepatan penggunaan hasil evaluasi keberlanjutan sebagai dasar penyusunan rencana.","Kemampuan mempertahankan produk secara lisan disertai alasan pengelolaan yang mendasarinya."],"bk":"BK-9 — Sintesis seluruh materi minggu ke-1 sampai ke-15 dalam bentuk dokumen Sustainable Destination Management Plan.","bobot":"15","agenda":["Pemeriksaan kelengkapan dokumen","Paparan kelompok","Tanya jawab panel","Penutupan dan refleksi"],"poin":[["Yang dinilai","Bukan kelancaran berbicara, melainkan apakah setiap keputusan pengelolaan di dalam dokumen bisa dipertanggungjawabkan."],["Rubrik D.3","Kelengkapan dan koherensi rencana · kelayakan implementasi · keberpihakan pada keberlanjutan dan masyarakat lokal · pertahanan lisan. Masing-masing 25%."],["Penilaian perorangan","Setiap anggota wajib mendapat sekurang-kurangnya satu pertanyaan. Nilai pertahanan lisan diberikan perorangan."]],"pustaka":["Pustaka 9 — GSTC, seluruh 38 kriteria dan indikator kinerjanya","Pustaka 3 — UNWTO §1.11 hlm. 26","Pustaka 11 — PP 50/2011","Pustaka 12 — Perda Kepri Pasal 56","Pustaka 13 — Perda Bintan Pasal 39","Pustaka 7 — Teguh hlm. 291","Pustaka 17 — Bappenas hlm. 99–102"],"alat":"Lembar skor dan ruang arsip","butir":[{"n":"Lembar skor LS-3","k":"panel mengisi rubrik D.3 secara daring, nilai pertahanan lisan diisi perorangan."},{"n":"Daftar periksa kelengkapan dokumen","k":"diperiksa sebelum sidang dimulai; dokumen tidak lengkap tidak diuji."},{"n":"LMS","k":"pengarsipan dokumen final seluruh kelompok sebagai contoh bagi angkatan berikutnya."}],"catatan":"Mintalah izin kelompok sebelum dokumennya dijadikan contoh untuk angkatan berikutnya.","tugas":{"judul":"Jalannya sidang","isi":["Paparan 15 menit, tanya jawab 15 menit per kelompok.","Panel terdiri atas dosen pengampu dan praktisi industri.","Bobot 15%, dinilai dengan rubrik D.3.","Dokumen final diunggah ke LMS setelah sidang."],"catatan":"Setelah ini, dokumen kalian layak ditunjukkan kepada pengelola DTW yang sebenarnya. Pertimbangkan untuk mengirimkannya."}}],"ALAT":[{"kode":"AB-1","nama":"Lembar Audit Komponen 6A","jenis":"skor","blok":"Minggu 4–5 · Tugas-2","lk":"LK-1","guna":"Memeriksa kelengkapan enam komponen destinasi dan menyandingkannya dengan kriteria Perda Kepri 2/2012 Pasal 12.","cara":"Isi tiap baris dengan temuan lapangan dan buktinya, lalu beri nilai 0, 1, atau 2. Baris tanpa bukti tidak boleh diberi nilai selain 0.","kolom":["Komponen","Temuan lapangan","Bukti yang dipegang","Nilai 0/1/2"],"baris":[["Attractions — daya tarik","Apa yang membuat orang mau datang ke sini"],["Accessibility — aksesibilitas","Rute, moda, terminal, jadwal, dan biaya mencapainya"],["Amenities — amenitas","Penginapan, rumah makan, air bersih, toilet"],["Available packages — paket tersedia","Penawaran yang sudah dirakit sehingga tidak perlu disusun sendiri"],["Activities — aktivitas","Apa yang bisa dikerjakan di sana, bukan sekadar dilihat"],["Ancillary services — layanan penunjang","Bank, klinik, jaringan telepon, kantor yang bisa didatangi"]],"nilai":[["0","Tidak ada, atau ada tetapi tidak berfungsi"],["1","Ada tetapi terbatas, tidak merata, atau tidak terawat"],["2","Ada, berfungsi, dan memadai bagi pola kunjungan sekarang"]],"tafsir":[["10–12","Keenam komponen tertata. Pemeriksaan berlanjut ke mutu, bukan ke keberadaan."],["7–9","Sebagian besar ada. Cari komponen bernilai 0 atau 1 — di situ letak pekerjaan rumahnya."],["4–6","Timpang. Biasanya daya tarik kuat tetapi penopangnya lemah."],["0–3","Belum layak disebut destinasi. Perlakukan sebagai daya tarik tunggal lebih dahulu."]],"catatan":"Angka ini bukan nilai tugas. Ia hanya penunjuk arah pembahasan. Yang dinilai adalah mutu bukti pada kolom ketiga."},{"kode":"AB-2","nama":"Penentu Tahap Siklus Hidup Destinasi","jenis":"centang-tahap","blok":"Minggu 4–5 · Tugas-2","lk":"LK-2","guna":"Menentukan posisi daya tarik wisata jangkar pada tujuh tahap Butler (1980).","cara":"Centang hanya ciri yang kalian punya buktinya. Tahap dengan centang terbanyak adalah dugaan posisinya. Bila dua tahap sama banyak, destinasi itu sedang berpindah tahap — dan itu jawaban yang sah.","tahap":[["Eksplorasi",["Pengunjung sedikit dan datang atas inisiatif sendiri","Belum ada fasilitas yang dibangun khusus untuk wisata","Pola kunjungan tidak teratur sepanjang tahun"]],["Keterlibatan",["Warga setempat mulai menyediakan fasilitas sederhana","Mulai terlihat musim ramai dan musim sepi","Sudah ada promosi meski terbatas"]],["Pembangunan",["Masuk modal dari luar daerah","Fasilitas berskala besar mulai dibangun","Pada puncak musim, jumlah pengunjung mendekati jumlah penduduk"]],["Konsolidasi",["Laju pertumbuhan kunjungan melambat","Ekonomi setempat sangat bergantung pada pariwisata","Sudah terbentuk kawasan usaha wisata yang mapan"]],["Stagnasi",["Jumlah kunjungan mencapai puncak dan berhenti tumbuh","Muncul keluhan lingkungan, sosial, atau ekonomi","Fasilitas sering berpindah tangan pemiliknya"]],["Penurunan",["Jumlah kunjungan menurun beberapa tahun berturut-turut","Fasilitas wisata beralih fungsi ke penggunaan lain","Pengunjung yang tersisa sebagian besar pelancong sehari"]],["Peremajaan",["Ditambahkan daya tarik baru yang benar-benar berbeda","Sumber daya yang selama ini tidak dipakai mulai dimanfaatkan","Datang segmen pasar yang sebelumnya tidak pernah datang"]]],"catatan":"Alat ini sengaja tidak memberi jawaban tunggal ketika bukti terbagi. Itu bukan kerusakan alat, melainkan gambaran destinasi yang memang sedang berpindah tahap."},{"kode":"AB-3","nama":"Peta Pemangku Kepentingan Pentahelix","jenis":"matriks","blok":"Minggu 6–7 · Tugas-3 dan Tugas-4","lk":"LK-5","guna":"Menempatkan tiap pihak pada matriks kepentingan-pengaruh dan menemukan pihak yang paling sering terlewat.","cara":"Tuliskan nama pihak beserta unsur pentahelixnya, lalu beri nilai 1 sampai 5 untuk kepentingan dan 1 sampai 5 untuk pengaruh. Nilai 4 ke atas dianggap tinggi.","kolom":["Nama pihak","Unsur pentahelix","Kepentingan 1–5","Pengaruh 1–5","Kotak"],"unsur":["Pemerintah","Akademisi","Dunia usaha","Masyarakat","Media"],"kotak":[["Kepentingan tinggi · pengaruh tinggi","Ajak sejak awal, libatkan dalam pengambilan keputusan."],["Kepentingan tinggi · pengaruh rendah","Beri saluran khusus. Di sinilah konflik kemudian hari bermula."],["Kepentingan rendah · pengaruh tinggi","Jaga hubungan, beri kabar berkala, jangan sampai menghambat."],["Kepentingan rendah · pengaruh rendah","Cukup diberi informasi."]],"catatan":"Pihak berkepentingan tinggi tetapi berpengaruh rendah hampir selalu masyarakat sekitar. Temuan itu pembuka diskusi, bukan penutupnya."},{"kode":"AB-4","nama":"Kalkulator Daya Dukung","jenis":"hitung","blok":"Minggu 10 · Tugas-6","lk":"LK-3","guna":"Menghitung daya dukung fisik dan memaksa asumsinya dituliskan.","cara":"Isi ketiga variabel beserta asumsinya. Hasil tidak boleh dilaporkan tanpa kolom asumsi terisi.","rumus":"DDF  =  ( A ÷ Au ) × Rf","variabel":[["A","Luas area efektif (m²)","Luas total dikurangi area terlarang, area berbahaya, dan zona lindung. Cantumkan cara mengukurnya."],["Au","Ruang per pengunjung (m²)","Ditetapkan dari jenis kegiatan. Cantumkan dari mana angka ini diambil."],["Rf","Faktor rotasi harian","Jam buka dibagi lama kunjungan rata-rata. Lama kunjungan harus diamati, bukan ditebak."]],"lanjut":[["Daya dukung fisik","Hasil rumus di atas — batas ruang semata."],["Daya dukung ekologis","Turunkan hasil di atas dengan faktor koreksi yang kalian tetapkan sendiri dan pertanggungjawabkan."],["Daya dukung sosial","Diperoleh dari wawancara warga, bukan dari rumus. Biasanya tercapai lebih dahulu."]],"catatan":"Asumsi yang tidak ditulis dianggap tidak ada. Angka tanpa asumsi tidak bisa diperdebatkan, dan karena itu tidak bisa dipakai."},{"kode":"AB-5","nama":"Lembar Evaluasi Keberlanjutan GSTC","jenis":"pilih-kriteria","blok":"Minggu 11–12 · Tugas-7","lk":"LK-4","guna":"Memilih delapan sampai dua belas kriteria GSTC yang benar-benar relevan, dengan keempat bagian terwakili.","cara":"Centang kriteria yang dipilih, salin indikator kinerjanya dari dokumen GSTC, sebutkan pasal regulasi Indonesia yang sejalan bila ada, lalu isi bukti dan penilaian.","bagian":{"A":"Bagian A — Sustainable management","B":"Bagian B — Socio-economic sustainability","C":"Bagian C — Cultural sustainability","D":"Bagian D — Environmental sustainability"},"kriteria":{"A":[["A1","Destination management responsibility"],["A2","Destination management strategy and action plan"],["A3","Monitoring and reporting"],["A4","Enterprise engagement and sustainability standards"],["A5","Resident engagement and feedback"],["A6","Visitor engagement and feedback"],["A7","Promotion and information"],["A8","Managing visitor volumes and activities"],["A9","Planning regulations and development control"],["A10","Climate change adaptation"],["A11","Risk and crisis management"]],"B":[["B1","Measuring the economic contribution of tourism"],["B2","Decent work and career opportunities"],["B3","Supporting local entrepreneurs and fair trade"],["B4","Support for community"],["B5","Preventing exploitation and discrimination"],["B6","Property and user rights"],["B7","Safety and security"],["B8","Access for all"]],"C":[["C1","Protection of cultural assets"],["C2","Cultural artefacts"],["C3","Intangible heritage"],["C4","Traditional access"],["C5","Intellectual property"],["C6","Visitor management at cultural sites"],["C7","Site interpretation"]],"D":[["D1","Protection of sensitive environments"],["D2","Visitor management at natural sites"],["D3","Wildlife interaction"],["D4","Species exploitation and animal welfare"],["D5","Energy conservation"],["D6","Water stewardship"],["D7","Water quality"],["D8","Wastewater"],["D9","Solid waste"],["D10","GHG emissions and climate change mitigation"],["D11","Low-impact transportation"],["D12","Light and noise pollution"]]},"padanan":[["A2","Perda Kepri Pasal 56 dan Perda Bintan Pasal 39 — indikasi program"],["A9","Perda Bintan Pasal 12–13 — kriteria kawasan"],["A8, D2, D3","Perda Kepri Pasal 46–47 — tanggung jawab lingkungan"],["B4","Perda Kepri Pasal 24–25 dan Perda Bintan Bagian Ketujuh — pemberdayaan masyarakat"],["C1–C7","UU 10/2009 Pasal 1 dan Pasal 7"]],"catatan":"Peringatan \"ada bagian yang belum terwakili\" bukan larangan. Kelompok boleh melanjutkan asal bisa menjelaskan mengapa bagian itu tidak relevan bagi daya tarik wisata jangkarnya.","sdgs":{"judul":"Menautkan pilihan kalian ke target nasional","ket":"Edisi GSTC yang dipakai di sini bernama \"with Performance Indicators and SDGs\", jadi tautan ke agenda global sudah ada sejak awal. Yang ditambahkan di bawah ini adalah angka nasionalnya, dari Roadmap SDGs Indonesia (Bappenas, 2019). Pakai sebagai pembanding, bukan sebagai kolom yang harus diisi.","baris":[["A","Tujuan 17 — Kemitraan","Bagian A berbicara tentang siapa yang mengelola dan dengan dana apa. Rasio pajak terhadap PDB ditargetkan naik dari 13,5% tanpa intervensi menjadi 15,1% dengan intervensi pada 2030 (hlm. 88); kebutuhan dana non-pemerintah mencapai USD 1.540 miliar untuk 2025–2030 (hlm. 106)."],["B","Tujuan 8 — Pekerjaan layak dan pertumbuhan","Pertumbuhan PDB riil per kapita ditargetkan 4,4% tanpa intervensi lawan 5,4% dengan intervensi, dan tingkat pengangguran 4,7% lawan 3,8% pada 2030 (hlm. 62–65). Strategi nasionalnya menyebut konektivitas destinasi dan peringkat TTCI (hlm. 63)."],["C","Belum ada indikator nasionalnya","Ringkasan Roadmap tidak memuat indikator kebudayaan di antara 29 indikator terpilihnya. Ini bukan alasan melewatkan Bagian C — justru di sinilah argumen kalian harus bersandar pada GSTC dan pada perda setempat, bukan pada angka nasional. Sebutkan ketiadaan itu secara jujur bila ditanya."],["D","Tujuan 6 dan Tujuan 15","Akses air minum layak 75,75% tanpa intervensi lawan 100% dengan intervensi pada 2030 (hlm. 48–49); tutupan hutan terhadap luas daratan 40% lawan 45,5% (hlm. 84–85)."]],"tutup":"Lalu satu pertanyaan penutup yang akan ditanyakan panel: dari semua kriteria yang kalian pilih, satu atau dua tujuan SDGs mana yang betul-betul diungkit rencana kalian, dan lewat rantai sebab apa? Bappenas sendiri menunjukkan ketujuh belas tujuan punya daya dorong yang berbeda-beda (hlm. 99–102), jadi menyebut semuanya sama saja dengan belum memilih."}},{"kode":"AB-6","nama":"Daftar Periksa Kelengkapan Dokumen Rencana","jenis":"periksa","blok":"Minggu 13–14 dan minggu 16 · Tugas-8","lk":"LK-6","guna":"Memeriksa kelengkapan Dokumen Rencana Pengelolaan sebelum diserahkan dan sebelum sidang.","cara":"Centang sendiri tiap butir. Butir yang belum tercentang adalah pekerjaan yang tersisa. Pada minggu 16, panel memeriksa daftar ini sebelum sidang dimulai.","butir":[["Analisis situasi lengkap","Memuat hasil audit 6A, posisi siklus hidup, dan peta pemangku kepentingan."],["Tujuan pengelolaan","Dirumuskan sebagai keadaan yang ingin dicapai, bukan sebagai kegiatan."],["Program prioritas","Tiap program menyebut tindakan, pelaksana, dan kurun waktunya."],["Indikator kinerja","Tiap indikator memuat nilai awal, target, dan cara mengukurnya."],["Peran pentahelix","Kelima unsur disebut, termasuk yang pengaruhnya rendah."],["Estimasi pembiayaan","Sumber dana disebut, meski masih berupa perkiraan."],["Mitigasi risiko","Merujuk GSTC A11 dan menyebut siapa yang bertindak bila risiko terjadi."],["Rujukan turun sampai halaman atau pasal","Bukan sekadar nomor pustaka."],["Panjang 10–15 halaman","Di luar lampiran."]],"catatan":"Dokumen tidak lengkap tidak diuji. Sampaikan hal ini sejak minggu 13, bukan menjelang sidang."},{"kode":"AB-7","nama":"Pemilih Model Pengelolaan Destinasi","jenis":"model-dmo","blok":"Minggu 6–7 · Tugas-3 dan Tugas-4","lk":"LK-7","guna":"Menentukan model pengelolaan destinasi mana yang sedang berjalan di daya tarik wisata jangkar kalian, menurut lima model Teguh (2026, hlm. 267 dan 291).","cara":"Jawab empat pertanyaan menurut keadaan yang kalian temukan di lapangan, bukan menurut yang seharusnya. Model dengan tanda terbanyak adalah dugaan awal; tuliskan alasannya sendiri.","tanya":[["Siapa yang memegang lahan dan perizinan utamanya?",[["Instansi pemerintah pusat atau daerah","gov"],["Perusahaan swasta lewat konsesi","private"],["Badan usaha bentukan pemerintah dan swasta","ppp"],["Desa atau kelompok masyarakat","community"],["Terbagi banyak pihak tanpa yang dominan","all"]]],["Dari mana modal pembangunannya datang?",[["APBN atau APBD","gov"],["Investasi swasta","private"],["Kerja sama pemerintah dan swasta","ppp"],["Swadaya warga dan dana desa","community"],["Beragam sumber, termasuk hibah dan lembaga non-pemerintah","all"]]],["Siapa yang paling menentukan keputusan sehari-hari?",[["Pejabat instansi pemerintah","gov"],["Manajemen perusahaan pengelola","private"],["Direksi badan usaha bersama","ppp"],["Musyawarah warga atau pengurus kelompok","community"],["Forum lintas pihak yang bersidang berkala","all"]]],["Risiko apa yang paling kalian khawatirkan di tempat ini?",[["Birokrasi lambat dan kurang inovatif","gov"],["Masyarakat sekitar tersisih dari manfaat","private"],["Kepentingan publik terdesak kepentingan komersial","ppp"],["Kapasitas manajerial dan akses pasar terbatas","community"],["Pengambilan keputusan terlalu lambat","all"]]]],"model":{"gov":["Government-Led","Destinasi prioritas nasional atau kawasan yang membutuhkan intervensi besar","Fokus pada kepentingan publik, keberlanjutan, zonasi, infrastruktur, dan konservasi. Contohnya badan otorita seperti BPODT Danau Toba, BOP Borobudur, dan BPOLBF Labuan Bajo."],"ppp":["Public–Private-Led","Destinasi bertaraf internasional berbasis kontrak dan izin investasi","Menggabungkan profesionalisme, efisiensi, dan kepentingan publik. Contohnya ITDC dengan Nusa Dua, Mandalika, dan Golo Mori."],"private":["Private-Led","Resor atau enklave wisata tertentu","Perlu mitigasi risiko sosial dan lingkungan. Contoh yang dipakai penulis adalah Bintan Resorts di Sebong Lagoi — kawasan 18.000–23.000 hektare yang dikelola satu entitas swasta sejak 1990."],"community":["Community-Led","Desa wisata dengan pendekatan partisipatif dan tumbuh dari bawah","Terkendala kapasitas teknis, manajerial, dan akses pasar, sehingga kolaborasi dengan pemerintah, swasta, atau akademisi menjadi kunci keberlanjutan. Contohnya Liya Togo, Penglipuran, Nglanggeran, dan Wae Rebo."],"all":["All-Inclusive Stakeholder-Led","Destinasi kompleks dengan banyak pemangku kepentingan","Menjamin partisipasi luas tanpa meninggalkan pihak mana pun, tetapi keputusannya lebih lambat dan koordinasinya intensif."]},"catatan":"Tidak ada model yang paling benar. Penulis menegaskan bahwa model DMO di Indonesia berkembang sesuai konteks, tujuan, dan karakteristik destinasi (hlm. 291). Yang dinilai bukan ketepatan menebak label, melainkan ketepatan membaca keadaan dan menyebutkan buktinya."}],"SOAL":[{"no":1,"bl":1,"rn":"C2","s":"Menurut Pasal 1 UU 10/2009, apa yang membedakan daya tarik wisata dari objek wisata?","p":["Luas wilayahnya","Statusnya sebagai sasaran kunjungan wisatawan","Kepemilikan tanahnya","Jumlah pengunjung per tahun"],"k":"B","b":"Pasal 1 memakai frasa \"menjadi sasaran atau tujuan kunjungan wisatawan\". Selama belum ada yang berniat mendatangkan orang, ia baru sebuah objek."},{"no":2,"bl":1,"rn":"C2","s":"Unsur berikut yang wajib ada pada destinasi pariwisata menurut UU 10/2009 adalah","p":["Hotel berbintang","Masyarakat yang saling terkait","Bandar udara internasional","Badan usaha milik daerah"],"k":"B","b":"Batasan destinasi pada Pasal 1 menyebut daya tarik, fasilitas umum, fasilitas pariwisata, aksesibilitas, serta masyarakat yang saling terkait."},{"no":3,"bl":1,"rn":"C2","s":"Manakah yang bukan termasuk empat pilar pembangunan kepariwisataan pada Pasal 7 UU 10/2009?","p":["Destinasi pariwisata","Industri pariwisata","Kelembagaan kepariwisataan","Sertifikasi kompetensi"],"k":"D","b":"Empat pilarnya adalah industri, destinasi, pemasaran, dan kelembagaan. Sertifikasi kompetensi bagian dari kelembagaan, bukan pilar tersendiri."},{"no":4,"bl":2,"rn":"C2","s":"Perda Kepri 2/2012 Pasal 17 menggolongkan daya tarik wisata ke dalam tiga jenis, yaitu","p":["Alam, budaya, dan hasil buatan manusia","Bahari, pegunungan, dan perkotaan","Massal, khusus, dan minat khusus","Domestik, regional, dan internasional"],"k":"A","b":"Penggolongan ini sejalan dengan UU 10/2009 dan menentukan risiko apa yang paling perlu dijaga pada tiap jenis."},{"no":5,"bl":2,"rn":"C4","s":"Risiko yang paling melekat pada daya tarik wisata budaya adalah","p":["Kerusakan bentang alam yang tidak bisa pulih","Komodifikasi dan hilangnya makna","Beban perawatan bangunan","Kebosanan pasar"],"k":"B","b":"Pemilik daya tarik budaya adalah komunitas, bukan pengelola. Risikonya bukan kerusakan fisik, melainkan makna yang menipis ketika dipendekkan demi pertunjukan."},{"no":6,"bl":2,"rn":"C2","s":"Empat tahap arah kebijakan pada Perda Kepri 2/2012 Pasal 18 berurutan sebagai","p":["Perintisan, pembangunan, pemantapan, pengembangan","Pengembangan, pemantapan, pembangunan, perintisan","Perintisan, pemantapan, pembangunan, pengembangan","Pembangunan, perintisan, pengembangan, pemantapan"],"k":"A","b":"Urutan ini punya logika bertahap yang serupa dengan siklus hidup destinasi Butler: penanganan yang tepat bergantung pada tahap."},{"no":7,"bl":3,"rn":"C2","s":"Dalam kerangka Buhalis, yang tidak termasuk ancillary services adalah","p":["Bank dan layanan keuangan","Klinik dan layanan kesehatan","Jaringan telekomunikasi","Paket wisata yang dijual biro perjalanan"],"k":"D","b":"Paket wisata adalah available packages, A tersendiri. Ancillary services adalah layanan yang tidak dijual tetapi menopang seluruh kunjungan."},{"no":8,"bl":3,"rn":"C4","s":"Pantai indah tanpa angkutan umum dan tanpa penginapan paling lemah pada komponen","p":["Attractions","Accessibility dan amenities","Activities","Ancillary services"],"k":"B","b":"Daya tariknya justru kuat. Yang lemah adalah cara mencapainya dan cara tinggal di sana — dua A yang paling sering dinilai \"cukup\" tanpa diperiksa."},{"no":9,"bl":3,"rn":"C2","s":"Menurut Butler (1980), tahap yang muncul tepat sebelum persimpangan peremajaan adalah","p":["Konsolidasi","Stagnasi","Pembangunan","Keterlibatan"],"k":"B","b":"Setelah stagnasi, destinasi bercabang: peremajaan atau penurunan. Butler hlm. 7–9."},{"no":10,"bl":3,"rn":"C4","s":"Tindakan berikut yang termasuk peremajaan destinasi menurut Butler adalah","p":["Mengganti nama kawasan","Menambah spanduk dan baliho","Mengubah daya tarik intinya","Memperbarui akun media sosial"],"k":"C","b":"Peremajaan menuntut perubahan daya tarik inti atau pemanfaatan sumber daya yang selama ini tidak dipakai. Tiga pilihan lainnya adalah perawatan."},{"no":11,"bl":4,"rn":"C2","s":"Lima unsur pentahelix adalah pemerintah, akademisi, dunia usaha, media, dan","p":["Masyarakat","Investor asing","Asosiasi profesi","Lembaga donor"],"k":"A","b":"Masyarakat adalah unsur yang paling sering hadir dalam daftar tetapi paling jarang hadir dalam rapat."},{"no":12,"bl":4,"rn":"C4","s":"Pihak berkepentingan tinggi tetapi berpengaruh rendah paling sering berupa","p":["Pemerintah provinsi","Masyarakat sekitar daya tarik","Operator tur besar","Media nasional"],"k":"B","b":"Merekalah yang menanggung debu, kebisingan, dan perubahan cara hidup, sekaligus yang paling jarang diundang ketika rencana disusun."},{"no":13,"bl":4,"rn":"C2","s":"Fungsi utama sebuah Destination Management Organization adalah","p":["Menjual paket wisata langsung ke wisatawan","Mengoordinasi pihak yang tidak saling memiliki","Menerbitkan izin usaha pariwisata","Menetapkan tarif masuk daya tarik wisata"],"k":"B","b":"Tidak ada satu pihak pun yang memiliki sebuah destinasi. Karena itu pengelolaannya selalu berupa koordinasi antarpihak yang tidak saling memerintah."},{"no":14,"bl":5,"rn":"C2","s":"Bagian yang menutup Laporan Audit Situasi Destinasi sebelum daftar pustaka adalah","p":["Profil DTW jangkar","Peta pemangku kepentingan","Sintesis situasi","Analisis kelembagaan"],"k":"C","b":"Sintesis harus benar-benar menyimpulkan bagian-bagian sebelumnya, bukan memperkenalkan masalah baru."},{"no":15,"bl":5,"rn":"C4","s":"Pernyataan berikut yang layak disebut temuan audit, bukan kalimat brosur, adalah","p":["Pantai ini memiliki keindahan yang memukau","Tersedia dua toilet untuk 300 pengunjung akhir pekan","Suasananya sangat asri dan menenangkan","Destinasi ini cocok untuk semua kalangan"],"k":"B","b":"Temuan bisa diperiksa orang lain. Kesan tidak. Perbedaan itulah yang dinilai pertama pada rubrik D.1."},{"no":16,"bl":6,"rn":"C2","s":"Untuk bahasan pemasaran digital, rujukan yang sudah tidak dipakai lagi adalah","p":["Morrison Bab 12","Kotler Bab 17 hlm. 527–535","UNWTO 2007 Bab 4 dan Bab 7","Buhalis Tabel 3"],"k":"C","b":"Bab 4 dan Bab 7 UNWTO 2007 membahas teknologi distribusi yang sudah lewat zamannya. Kerangka strategi dan daftar periksanya tetap terpakai."},{"no":17,"bl":6,"rn":"C4","s":"Positioning destinasi paling tepat dirumuskan setelah kelompok memiliki","p":["Anggaran promosi","Hasil audit 6A dan posisi siklus hidup","Akun media sosial resmi","Logo dan tagline"],"k":"B","b":"Positioning adalah janji. Menjanjikan sesuatu sebelum tahu apa yang benar-benar ada adalah cara tercepat melebarkan jarak antara janji dan kenyataan."},{"no":18,"bl":7,"rn":"C2","s":"Dalam rumus DDF = (A ÷ Au) × Rf, huruf Au melambangkan","p":["Luas area efektif","Ruang yang dibutuhkan tiap pengunjung","Faktor rotasi harian","Jumlah pengunjung maksimum"],"k":"B","b":"Au ditetapkan dari jenis kegiatan. Orang yang berjemur memerlukan ruang berbeda dari orang yang berjalan menyusuri jalur."},{"no":19,"bl":7,"rn":"C3","s":"Luas area efektif diperoleh dari luas total setelah dikurangi","p":["Area parkir dan jalan masuk","Area terlarang, berbahaya, dan zona lindung","Area yang belum bersertifikat","Area milik masyarakat setempat"],"k":"B","b":"Penyusutan dari luas total ke luas efektif biasanya besar, dan penyusutan itu sendiri sudah merupakan temuan."},{"no":20,"bl":7,"rn":"C3","s":"Faktor rotasi harian dihitung dengan cara","p":["Jam buka dibagi lama kunjungan rata-rata","Jumlah pengunjung dibagi luas area","Lama kunjungan dibagi jam buka","Luas area dibagi jumlah pengunjung"],"k":"A","b":"Lama kunjungan rata-rata harus diamati di lapangan, bukan diasumsikan. Bila diasumsikan, asumsinya wajib ditulis."},{"no":21,"bl":8,"rn":"C2","s":"GSTC Destination Criteria v2.0 memuat 38 kriteria yang terbagi ke dalam","p":["Dua bagian","Tiga bagian","Empat bagian","Lima bagian"],"k":"C","b":"A pengelolaan berkelanjutan, B sosial-ekonomi, C budaya, dan D lingkungan."},{"no":22,"bl":8,"rn":"C2","s":"Bagian C pada GSTC Destination Criteria v2.0 membahas keberlanjutan","p":["Pengelolaan","Sosial-ekonomi","Budaya","Lingkungan"],"k":"C","b":"Bagian C memuat C1 sampai C7, dari perlindungan aset budaya sampai interpretasi situs."},{"no":23,"bl":8,"rn":"C5","s":"Syarat pemilihan delapan sampai dua belas kriteria GSTC pada proyek semester ini adalah","p":["Semuanya dari satu bagian yang paling relevan","Keempat bagian terwakili","Sekurang-kurangnya enam kriteria dari bagian D","Hanya kriteria yang datanya mudah diperoleh"],"k":"B","b":"Tanpa syarat itu, pilihan hampir selalu jatuh ke bagian yang paling mudah diukur, dan bagian pengelolaan justru terlewat."},{"no":24,"bl":8,"rn":"C4","s":"Batas yang biasanya tercapai lebih dahulu daripada batas daya dukung fisik adalah","p":["Batas anggaran","Batas sosial","Batas hukum","Batas teknologi"],"k":"B","b":"Batas sosial ditentukan oleh sampai di mana warga masih merasa tempat itu miliknya. Ia hampir tidak pernah dihitung, dan ia yang paling sering meledak."},{"no":25,"bl":9,"rn":"C2","s":"Dokumen Rencana Pengelolaan pada mata kuliah ini memuat delapan bagian, diawali oleh","p":["Program prioritas","Analisis situasi","Indikator kinerja","Estimasi pembiayaan"],"k":"B","b":"Kerangka ini mengikuti panduan UNWTO 2007. Program yang disusun sebelum situasinya dianalisis biasanya bisa ditempelkan ke tempat mana pun."},{"no":26,"bl":9,"rn":"C3","s":"Indikasi program tingkat kabupaten untuk wilayah Bintan dapat dirujuk pada","p":["Perda Bintan 4/2015 Pasal 39","Perda Kepri 2/2012 Pasal 12","PP 50/2011 Pasal 1","UU 10/2009 Pasal 7"],"k":"A","b":"Pasal 39 memuat daftar rencana kegiatan beserta pihak yang diberi tanggung jawab — bentuk program yang pernah disepakati di wilayah ini."},{"no":27,"bl":9,"rn":"C5","s":"Sebuah indikator kinerja disebut terukur bila memuat","p":["Kata sifat yang kuat","Nilai awal, target, dan cara mengukurnya","Nama pihak penanggung jawab saja","Kutipan dari peraturan daerah"],"k":"B","b":"Cara mengukur adalah bagian yang paling sering hilang, padahal justru itu yang membuat sebuah rencana tetap berguna setelah masa berlakunya habis."},{"no":28,"bl":10,"rn":"C5","s":"Program prioritas yang manfaatnya bagi masyarakat setempat sulit dijelaskan sebaiknya","p":["Dijelaskan dengan bahasa yang lebih meyakinkan","Ditinjau ulang","Dipindahkan ke bagian akhir dokumen","Dihapus tanpa penjelasan"],"k":"B","b":"Kesulitan menjelaskan manfaat biasanya pertanda program itu memang belum bermanfaat, bukan pertanda penjelasnya kurang pandai."},{"no":29,"bl":11,"rn":"C2","s":"Pada Final Project Defense, dokumen yang tidak lengkap menurut daftar periksa akan","p":["Tetap diuji dengan pengurangan nilai","Tidak diuji","Diuji pada kesempatan berikutnya tanpa syarat","Diuji hanya bagian yang lengkap"],"k":"B","b":"Panel memeriksa daftar periksa sebelum sidang dimulai. Ketentuan ini disampaikan sejak minggu 13, bukan menjelang sidang."},{"no":30,"bl":11,"rn":"C2","s":"Rujukan dalam dokumen akhir dianggap memadai bila turun sampai","p":["Nama penulis dan tahun","Nomor pustaka pada daftar","Bab, halaman, pasal, atau kode kriteria","Judul buku"],"k":"C","b":"Ketentuan ini berlaku sejak tugas pertama dan dipakai pada seluruh berkas mata kuliah: RPS, modul, panduan proyek, dan instrumen penilaian."},{"no":31,"bl":4,"rn":"C2","s":"Di antara lima model pengelolaan destinasi menurut Teguh, yang menempatkan masyarakat sebagai aktor utama adalah","p":["Government-Led","Private-Led","Community-Led","Public–Private-Led"],"k":"C","b":"Community-Led atau Community-Based Tourism tumbuh dari bawah lewat Pokdarwis atau badan usaha desa. Keunggulannya nilai sosial-budaya; kendalanya kapasitas manajerial dan akses pasar (Teguh 2026, hlm. 267 dan 282–283)."},{"no":32,"bl":4,"rn":"C2","s":"Teguh menjadikan Bintan Resorts sebagai contoh nyata model pengelolaan destinasi yang mana?","p":["Government-Led","Private-Led","Community-Led","All-Inclusive Stakeholder-Led"],"k":"B","b":"Kawasan 18.000–23.000 hektare di Sebong Lagoi direncanakan, dibangun, dan dikelola oleh satu entitas swasta dengan intervensi publik minimal selain izin dasar dan zonasi (hlm. 279–282)."},{"no":33,"bl":5,"rn":"C4","s":"Dari enam indikator kesuksesan tata kelola, yang disebut penulis sebagai cerminan efektivitas seluruh tata kelola adalah","p":["Peran serta masyarakat","Infrastruktur dan fasilitas","Daya dukung fisik","Mutu pelayanan wisata"],"k":"D","b":"Mutu pelayanan diperlakukan sebagai outcome proxy: ia menampung hasil dari kelima indikator lain. Infrastruktur sendiri disebut enabling factor, bukan tujuan akhir (hlm. 237–244)."},{"no":34,"bl":8,"rn":"C4","s":"Menurut temuan empiris Teguh, dimensi nilai yang paling menentukan kesuksesan tata kelola destinasi adalah","p":["Nilai terinduksi dari luar","Etika lokal","Estetika lokal","Ekonomi lokal"],"k":"B","b":"Etika lokal menyumbang kontribusi terbesar, sementara nilai terinduksi tidak signifikan. Karena itu nilai dari luar diposisikan sebagai penguat, bukan pengganti — prinsip keseimbangan asimetris (hlm. 231–236)."},{"no":35,"bl":9,"rn":"C3","s":"Dalam model tata kelola adaptif Teguh, unsur yang menutup siklus dan mengembalikannya ke lingkungan strategis adalah","p":["Output","Outcome","Umpan balik adaptif","Input"],"k":"C","b":"Urutannya lingkungan strategis, input, proses, output, outcome, lalu umpan balik adaptif berupa evaluasi dan pembelajaran kebijakan yang kembali ke awal (hlm. 244–245, Gambar 7.1)."},{"no":36,"bl":4,"rn":"C2","s":"Menurut Roadmap SDGs Indonesia, pada skenario pembiayaan tertinggi porsi anggaran pemerintah","p":["Naik dari 58,5% menjadi 62,1%","Menyusut dari 62,1% menjadi 58,5%","Tetap di 62,1%","Tidak dihitung dalam dokumen itu"],"k":"B","b":"Justru menyusut, karena peran pihak non-pemerintah diharapkan membesar — kebutuhannya USD 548 miliar pada 2020–2024 dan USD 1.540 miliar pada 2025–2030 (hlm. 106). Inilah salah satu alasan model PPP dan Private-Led banyak dipilih di Indonesia."},{"no":37,"bl":5,"rn":"C2","s":"Dua hal berkaitan pariwisata yang disebut sebagai strategi nasional dalam Roadmap SDGs Indonesia adalah","p":["Jumlah kamar hotel dan lama tinggal","Konektivitas destinasi dan peringkat Tourism and Travel Competitiveness Index","Jumlah desa wisata dan nilai devisa","Sertifikasi pemandu dan jumlah penerbangan"],"k":"B","b":"Halaman 63 menyebut \"improving the connectivity of tourism destinations\" dengan penekanan pada MICE, minat khusus, dan lintas batas, serta menaikkan peringkat Indonesia pada TTCI. Temuan kolom aksesibilitas pada audit 6A menyambung langsung ke sini."},{"no":38,"bl":8,"rn":"C4","s":"Analisis keterkaitan pada Roadmap SDGs Indonesia menemukan bahwa dari 43 target yang ditelaah","p":["Seluruhnya berdaya dorong sama besar","Hanya 17 target dari 9 tujuan yang berdaya dorong tinggi","Tidak ada target yang saling berkaitan","Hanya target lingkungan yang berpengaruh"],"k":"B","b":"Target dipetakan ke empat kuadran lalu disusun dalam hierarki sepuluh tingkat; empat target di tingkat terbawah — pendidikan dasar, efisiensi energi, energi terbarukan, hunian layak — justru paling berpengaruh (hlm. 99–102). Karena itu rencana yang baik memilih pengungkit, bukan menyebut semua tujuan."},{"no":39,"bl":9,"rn":"C3","s":"Urutan yang dipakai Roadmap SDGs Indonesia untuk menyajikan tiap indikatornya, dan yang bisa dipinjam sebagai rangka dokumen rencana, adalah","p":["Visi, misi, program, anggaran","Kondisi sekarang, proyeksi bila dibiarkan, target 2030, selisih, lalu intervensi yang menutupnya","Masalah, penyebab, solusi, penutup","Latar belakang, kajian pustaka, metode, hasil"],"k":"B","b":"Bagan ringkasnya ada di halaman 5 dan polanya berulang di seluruh Bab 2. Pertanyaan \"ke mana destinasi ini menuju bila tidak ada yang dikerjakan\" adalah pertanyaan Butler tentang stagnasi, hanya dijawab dengan angka."}]};
+const PUSTAKA = [["1","Morrison, A. M. (2019). Marketing and Managing Tourism Destinations (2nd ed.). Abingdon: Routledge."],["2","Ritchie, J. R. B. &amp; Crouch, G. I. (2003). The Competitive Destination. Wallingford: CABI."],["3","World Tourism Organization (2007). A Practical Guide to Tourism Destination Management. Madrid: UNWTO."],["4","Cooper, C. (2022). Essentials of Tourism. London: SAGE."],["5","Buhalis, D. (2000). “Marketing the competitive destination of the future.” Tourism Management 21(1), 97–116."],["6","Karuniawati, E. A. D. (2026). Harmoni di Balik Kanopi. Disertasi. — bacaan wajib."],["7","Teguh, F. (2026). Transformasi Tata Kelola Destinasi Pariwisata. Sleman: Gadjah Mada University Press. — Bab 6–7, hlm. 229–291."],["8","Butler, R. W. (1980). “The concept of a tourist area cycle of evolution.” Canadian Geographer 24(1), 5–12."],["9","Global Sustainable Tourism Council (2019). GSTC Destination Criteria v2.0."],["10","Undang-Undang RI Nomor 10 Tahun 2009 tentang Kepariwisataan."],["11","Peraturan Pemerintah Nomor 50 Tahun 2011 tentang Ripparnas 2010–2025."],["12","Peraturan Daerah Provinsi Kepulauan Riau Nomor 2 Tahun 2012 tentang RIPPARDA 2012–2022."],["13","Peraturan Daerah Kabupaten Bintan Nomor 4 Tahun 2015 tentang RIPPARDA 2015–2025."],["14","Kotler, P. dkk. (2017). Marketing for Hospitality and Tourism (7th ed.). Harlow: Pearson. Bab 17, hlm. 507–548."],["15","Morita, N. (2018). “Pengaruh perkembangan pariwisata Lagoi…” JOM FISIP 5(2), 1–15."],["16","Rahayu, I. &amp; Ozali, I. (2024). “Model pengelolaan wisata bahari berkelanjutan di Kabupaten Bintan.” JESH 6(1), 1–9."],["17","Kementerian PPN/Bappenas (2019). Roadmap of SDGs Indonesia: A Highlight. Jakarta: Bappenas. — Bab 2 Tujuan 6, 8, 11, 15, 17; Bab 3 hlm. 93–102; Bab 4 hlm. 103–112."],["18","Anderson, L. W. &amp; Krathwohl, D. R. (eds.) (2001). A Taxonomy for Learning, Teaching, and Assessing. New York: Longman."]];
+
+const e = (t, k, isi) => {
+  const n = document.createElement(t);
+  if (k) n.className = k;
+  if (isi !== undefined) n.innerHTML = isi;
+  return n;
+};
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const bungkus = t => { const g = e('div', 'gulir'); g.appendChild(t); return g; };
+
+/* ── kerangka halaman ── */
+const HALAMAN = [];
+function daftar(id, kel, nama, buat) { HALAMAN.push({ id, kel, nama, buat }); }
+
+function judulHalaman(kicker, judul, ket) {
+  const w = e('div');
+  w.appendChild(e('div', 'kicker', esc(kicker)));
+  w.appendChild(e('h1', null, esc(judul)));
+  w.appendChild(e('div', 'garis-emas'));
+  if (ket) w.appendChild(e('p', 'redup', esc(ket)));
+  return w;
+}
+
+/* ══ BERANDA ══ */
+daftar('beranda', 'Mulai', 'Beranda', () => {
+  const w = e('div');
+  w.appendChild(judulHalaman('Politeknik Bintan Cakrawala · D3 Perjalanan Wisata',
+    'Media Pembelajaran Digital', 'Pengelolaan Destinasi Wisata · PW102 · 3 SKS · selaras dengan RPS Revisi 004'));
+  const k = e('div', 'kartu navy pita');
+  k.innerHTML = '<div class="kicker">CARA MEMAKAI</div><p>Berkas ini berjalan tanpa sambungan internet dan tanpa memasang apa pun. Simpan satu salinan di komputer kelas, satu di telepon. Apa yang kalian isi <b>tidak tersimpan</b> ketika halaman ditutup — pakai tombol <i>Salin hasil</i> di tiap alat bantu, lalu tempelkan ke laporan kelompok.</p>';
+  w.appendChild(k);
+
+  w.appendChild(e('h2', null, 'Sebelas blok minggu'));
+  const kisi = e('div', 'kisi2');
+  D.BLOK.forEach(b => {
+    const c = e('div', 'kartu');
+    c.innerHTML = '<div class="kicker">Blok ' + b.no + ' · ' + esc(b.mg) + ' <span class="lencana">' + b.bobot + '%</span></div>'
+      + '<h3 style="margin:.2rem 0 .35rem">' + esc(b.judul) + '</h3>'
+      + '<p class="kecil redup" style="margin:0">' + esc(b.alat) + '</p>';
+    c.style.cursor = 'pointer';
+    c.onclick = () => buka('blok' + b.no);
+    kisi.appendChild(c);
+  });
+  w.appendChild(kisi);
+
+  w.appendChild(e('h2', null, 'Tujuh alat bantu'));
+  const kisi2 = e('div', 'kisi3');
+  D.ALAT.forEach(a => {
+    const c = e('div', 'kartu krem');
+    c.innerHTML = '<div class="kicker">' + a.kode + ' · ' + esc(a.lk) + '</div>'
+      + '<h3 style="margin:.2rem 0 .35rem">' + esc(a.nama) + '</h3>'
+      + '<p class="kecil redup" style="margin:0">' + esc(a.blok) + '</p>';
+    c.style.cursor = 'pointer';
+    c.onclick = () => buka(a.kode);
+    kisi2.appendChild(c);
+  });
+  w.appendChild(kisi2);
+  return w;
+});
+
+/* ══ PANDUAN ══ */
+daftar('panduan', 'Mulai', 'Panduan pemakaian', () => {
+  const w = e('div');
+  w.appendChild(judulHalaman('Sebelum mulai', 'Panduan pemakaian',
+    'Lima hal yang perlu disepakati sebelum alat bantu ini dibuka di kelas.'));
+  const butir = [
+    ['Alat bantu dibuka sebelum tugas dimulai, bukan sesudah',
+     'Mahasiswa perlu melihat apa yang akan diperiksa sebelum mereka turun ke lapangan.'],
+    ['Rubrik dibuka bersamaan dengan alat bantu',
+     'Rubrik D.1, D.2, dan D.3 ada pada RPS Revisi 004 dan tidak diulang di sini.'],
+    ['Hasil alat bantu bukan nilai',
+     'Angka yang keluar dari lembar audit 6A dan kalkulator daya dukung adalah penunjuk arah pembahasan. Yang dinilai adalah mutu bukti dan mutu asumsi.'],
+    ['Sediakan selalu versi cetak',
+     'Jaringan kampus sesekali lambat. Panduan Media Pembelajaran Digital (.docx) memuat ketujuh alat bantu ini sebagai lembar kerja siap gandakan.'],
+    ['Isian tidak tersimpan',
+     'Halaman ini tidak menyimpan apa pun. Pakai tombol Salin hasil, lalu tempelkan ke laporan. Tombol Cetak menyiapkan seluruh halaman untuk dicetak atau disimpan sebagai PDF.'],
+  ];
+  const ol = e('ol', 'num');
+  butir.forEach(([a, b]) => ol.appendChild(e('li', null, '<b>' + esc(a) + '.</b> ' + esc(b))));
+  w.appendChild(ol);
+
+  w.appendChild(e('h2', null, 'Tiga berkas yang saling melengkapi'));
+  w.appendChild(tabelDari(['Berkas', 'Dipakai ketika'], [
+    ['Panduan Media Pembelajaran Digital (.docx)', 'Menyiapkan pertemuan, menggandakan lembar kerja, atau ketika jaringan tidak bisa diandalkan.'],
+    ['Bank Soal (.xlsx)', 'Mengunggah kuis ke Quizizz atau Kahoot, dan menilai hasil kuis secara otomatis.'],
+    ['Berkas ini (.html)', 'Di kelas, di laboratorium komputer, atau dibuka mahasiswa dari telepon masing-masing.'],
+  ]));
+
+  const t = e('div', 'deret');
+  const b1 = e('button', 'tombol', 'Cetak halaman ini');
+  b1.onclick = () => window.print();
+  t.appendChild(b1);
+  w.appendChild(t);
+  return w;
+});
+
+function tabelDari(kepala, baris) {
+  const t = e('table');
+  if (kepala) {
+    const tr = e('tr');
+    kepala.forEach(h => tr.appendChild(e('th', null, esc(h))));
+    t.appendChild(e('thead')).appendChild(tr);
+  }
+  const tb = e('tbody');
+  baris.forEach(r => {
+    const tr = e('tr');
+    r.forEach(c => tr.appendChild(e('td', null, c)));
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+  const g = e('div', 'gulir');
+  g.appendChild(t);
+  return g;
+}
+
+/* ══ HALAMAN BLOK ══ */
+D.BLOK.forEach(b => daftar('blok' + b.no, 'Blok minggu', 'Blok ' + b.no + ' · ' + b.mg, () => {
+  const w = e('div');
+  w.appendChild(judulHalaman('Blok ' + b.no + ' · ' + b.mg + ' · bobot ' + b.bobot + '%', b.judul));
+
+  const k = e('div', 'kartu ice pita-navy');
+  k.innerHTML = '<div class="kicker">Tujuan pembelajaran</div><p style="margin:.2rem 0 .6rem"><b>' + esc(b.sub) + '</b></p>'
+    + '<div class="kicker">Indikator</div>';
+  const ol = e('ol', 'num');
+  b.ind.forEach(t => ol.appendChild(e('li', null, esc(t))));
+  k.appendChild(ol);
+  w.appendChild(k);
+
+  w.appendChild(e('h2', null, 'Peta materi'));
+  w.appendChild(e('p', null, esc(b.bk)));
+  w.appendChild(tabelDari(['Rujukan', 'Turun sampai'],
+    b.pustaka.map(t => { const x = t.split('—'); return [esc(x[0].trim()), esc((x[1] || '').trim())]; })));
+
+  w.appendChild(e('h2', null, 'Yang akan kita kerjakan'));
+  const ol2 = e('ol', 'num');
+  b.agenda.forEach(t => ol2.appendChild(e('li', null, esc(t))));
+  w.appendChild(ol2);
+
+  w.appendChild(e('h2', null, 'Media pembelajaran digital'));
+  w.appendChild(e('p', 'kecil redup', 'Alat utama blok ini: <b>' + esc(b.alat) + '</b>'));
+  const kisi = e('div', 'kisi3');
+  b.butir.forEach(x => {
+    const c = e('div', 'kartu');
+    c.innerHTML = '<h3 style="margin:0 0 .35rem;font-size:1rem">' + esc(x.n) + '</h3>'
+      + '<p class="kecil" style="margin:0">' + esc(x.k) + '</p>';
+    kisi.appendChild(c);
+  });
+  w.appendChild(kisi);
+  const kn = e('div', 'kartu navy pita');
+  kn.innerHTML = '<div class="kicker">Mengapa begitu</div><p style="margin:0">' + esc(b.catatan) + '</p>';
+  w.appendChild(kn);
+
+  w.appendChild(e('h2', null, esc(b.tugas.judul)));
+  const ol3 = e('ol', 'num');
+  b.tugas.isi.forEach(t => ol3.appendChild(e('li', null, esc(t))));
+  w.appendChild(ol3);
+  const kk = e('div', 'kartu krem pita');
+  kk.innerHTML = '<p style="margin:0"><b>Catatan pengikat.</b> ' + esc(b.tugas.catatan) + '</p>';
+  w.appendChild(kk);
+
+  const pola = new RegExp(b.mg.replace(/[.*+?^${}()|[]\]/g, '\$&') + '(?![0-9–-])', 'i');
+  const alatBlok = D.ALAT.filter(a => pola.test(a.blok));
+  if (alatBlok.length) {
+    const d = e('div', 'deret');
+    alatBlok.forEach(a => {
+      const t = e('button', 'tombol', 'Buka ' + a.nama);
+      t.onclick = () => buka(a.kode);
+      d.appendChild(t);
+    });
+    w.appendChild(d);
+  }
+  return w;
+}));
+
+/* ══ ALAT BANTU ══ */
+function kepalaAlat(a) {
+  const w = e('div');
+  w.appendChild(judulHalaman(a.kode + ' · ' + a.lk + ' · ' + a.blok, a.nama));
+  const k = e('div', 'kartu ice pita-navy');
+  k.innerHTML = '<p style="margin:0 0 .45rem"><b>Guna.</b> ' + esc(a.guna) + '</p>'
+    + '<p style="margin:0"><b>Cara mengisi.</b> ' + esc(a.cara) + '</p>';
+  w.appendChild(k);
+  return w;
+}
+function kakiAlat(w, a, ambil) {
+  if (a.sdgs) {
+    const ks = e('div', 'kartu ice pita-navy');
+    let html = '<p style="margin:0 0 .5rem"><b>' + esc(a.sdgs.judul) + '</b></p>'
+      + '<p style="margin:0 0 .6rem">' + esc(a.sdgs.ket) + '</p>';
+    a.sdgs.baris.forEach(b => {
+      html += '<p style="margin:0 0 .45rem"><b>Bagian ' + esc(b[0]) + ' &middot; '
+        + esc(b[1]) + '.</b> ' + esc(b[2]) + '</p>';
+    });
+    html += '<p style="margin:.6rem 0 0">' + esc(a.sdgs.tutup) + '</p>';
+    ks.innerHTML = html;
+    w.appendChild(ks);
+  }
+  const kk = e('div', 'kartu krem pita');
+  kk.innerHTML = '<p style="margin:0"><b>Catatan.</b> ' + esc(a.catatan) + '</p>';
+  w.appendChild(kk);
+  const d = e('div', 'deret');
+  const b1 = e('button', 'tombol', 'Salin hasil');
+  const kabar = e('span', 'kecil redup', '');
+  b1.onclick = () => {
+    const teks = a.nama + ' — ' + a.kode + '\n\n' + ambil();
+    const ta = document.createElement('textarea');
+    ta.value = teks; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); kabar.textContent = 'Tersalin. Tempelkan ke laporan kelompok.'; }
+    catch (x) { kabar.textContent = 'Peramban menolak menyalin. Tandai teksnya sendiri lalu salin.'; }
+    document.body.removeChild(ta);
+    setTimeout(() => kabar.textContent = '', 4000);
+  };
+  const b2 = e('button', 'tombol kedua', 'Cetak');
+  b2.onclick = () => window.print();
+  d.appendChild(b1); d.appendChild(b2); d.appendChild(kabar);
+  w.appendChild(d);
+}
+
+/* AB-1 — audit 6A */
+daftar('AB-1', 'Alat bantu', 'AB-1 · Audit 6A', () => {
+  const a = D.ALAT[0], w = kepalaAlat(a);
+  const t = e('table');
+  t.innerHTML = '<thead><tr><th style="width:24%">Komponen</th><th>Temuan lapangan</th><th>Bukti yang dipegang</th><th style="width:16%">Nilai</th></tr></thead>';
+  const tb = e('tbody');
+  a.baris.forEach((r, i) => {
+    const tr = e('tr');
+    tr.innerHTML = '<td><b>' + esc(r[0]) + '</b><br><span class="kecil redup">' + esc(r[1]) + '</span></td>'
+      + '<td><textarea data-t="' + i + '"></textarea></td>'
+      + '<td><textarea data-b="' + i + '"></textarea></td>'
+      + '<td><div class="radio-deret">'
+      + [0, 1, 2].map(v => '<label><input type="radio" name="n' + i + '" value="' + v + '">' + v + '</label>').join('')
+      + '</div><div class="kecil redup" data-w="' + i + '"></div></td>';
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+  w.appendChild(bungkus(t));
+
+  const hasil = e('div', 'kartu navy pita');
+  hasil.innerHTML = '<div class="kicker">Jumlah nilai</div><div class="hasil" style="color:#fff" id="ab1-jml">0 dari 12</div><div id="ab1-taf" style="margin-top:.35rem"></div>';
+  w.appendChild(hasil);
+  w.appendChild(e('h3', null, 'Arti nilai'));
+  w.appendChild(tabelDari(null, a.nilai.map(r => [('<b>' + esc(r[0]) + '</b>'), esc(r[1])])));
+  w.appendChild(e('h3', null, 'Tafsiran jumlah nilai'));
+  w.appendChild(tabelDari(null, a.tafsir.map(r => [('<b>' + esc(r[0]) + '</b>'), esc(r[1])])));
+
+  function hitung() {
+    let jml = 0;
+    a.baris.forEach((r, i) => {
+      const pilih = w.querySelector('input[name="n' + i + '"]:checked');
+      const bukti = w.querySelector('[data-b="' + i + '"]').value.trim();
+      const cat = w.querySelector('[data-w="' + i + '"]');
+      let v = pilih ? +pilih.value : 0;
+      if (v > 0 && !bukti) { cat.textContent = 'Tanpa bukti, nilai dihitung 0.'; v = 0; }
+      else cat.textContent = '';
+      jml += v;
+    });
+    w.querySelector('#ab1-jml').textContent = jml + ' dari 12';
+    const taf = a.tafsir.find(([r]) => {
+      const [x, y] = r.split('–').map(Number); return jml >= x && jml <= y;
+    });
+    w.querySelector('#ab1-taf').textContent = taf ? taf[1] : '';
+  }
+  w.addEventListener('input', hitung); w.addEventListener('change', hitung);
+  kakiAlat(w, a, () => a.baris.map((r, i) => {
+    const pilih = w.querySelector('input[name="n' + i + '"]:checked');
+    return r[0] + '\n  Temuan : ' + w.querySelector('[data-t="' + i + '"]').value
+      + '\n  Bukti  : ' + w.querySelector('[data-b="' + i + '"]').value
+      + '\n  Nilai  : ' + (pilih ? pilih.value : '-');
+  }).join('\n') + '\n\nJumlah: ' + w.querySelector('#ab1-jml').textContent);
+  setTimeout(hitung, 0);
+  return w;
+});
+
+/* AB-2 — penentu tahap */
+daftar('AB-2', 'Alat bantu', 'AB-2 · Tahap siklus hidup', () => {
+  const a = D.ALAT[1], w = kepalaAlat(a);
+  const kisi = e('div', 'kisi2');
+  a.tahap.forEach(([nama, ciri], ti) => {
+    const c = e('div', 'kartu');
+    c.innerHTML = '<h3 style="margin:0 0 .4rem;font-size:1.02rem">' + esc(nama) + '</h3>';
+    ciri.forEach((x, ci) => {
+      const l = e('label', 'pilih');
+      l.innerHTML = '<input type="checkbox" data-t="' + ti + '" data-c="' + ci + '"><span>' + esc(x) + '</span>';
+      c.appendChild(l);
+    });
+    kisi.appendChild(c);
+  });
+  w.appendChild(kisi);
+  const hasil = e('div', 'kartu navy pita');
+  hasil.innerHTML = '<div class="kicker">Dugaan posisi</div><div class="hasil" style="color:#fff" id="ab2-h">Belum ada centang</div><div id="ab2-k" style="margin-top:.35rem"></div>';
+  w.appendChild(hasil);
+
+  function hitung() {
+    const jml = a.tahap.map((t, i) =>
+      [t[0], w.querySelectorAll('input[data-t="' + i + '"]:checked').length]);
+    const maks = Math.max(...jml.map(x => x[1]));
+    const puncak = jml.filter(x => x[1] === maks && maks > 0);
+    const h = w.querySelector('#ab2-h'), k = w.querySelector('#ab2-k');
+    if (!maks) { h.textContent = 'Belum ada centang'; k.textContent = ''; return; }
+    if (puncak.length > 1) {
+      h.textContent = puncak.map(x => x[0]).join(' / ');
+      k.innerHTML = '<span class="peringatan" style="display:block;background:#3B5580;border-left-color:#C9A227;color:#EFE0AE">Dua tahap atau lebih sama kuat. Destinasi ini sedang berpindah tahap — dan itu jawaban yang sah. Tuliskan keduanya beserta buktinya.</span>';
+    } else {
+      h.textContent = puncak[0][0];
+      k.textContent = puncak[0][1] + ' dari 3 ciri terpenuhi. Pastikan tiap centang punya buktinya.';
+    }
+  }
+  w.addEventListener('change', hitung);
+  kakiAlat(w, a, () => a.tahap.map((t, i) => {
+    const c = [...w.querySelectorAll('input[data-t="' + i + '"]:checked')]
+      .map(x => t[1][+x.dataset.c]);
+    return t[0] + ' (' + c.length + '/3)' + (c.length ? '\n  - ' + c.join('\n  - ') : '');
+  }).join('\n') + '\n\nDugaan posisi: ' + w.querySelector('#ab2-h').textContent);
+  setTimeout(hitung, 0);
+  return w;
+});
+
+/* AB-3 — peta pemangku kepentingan */
+daftar('AB-3', 'Alat bantu', 'AB-3 · Peta pemangku kepentingan', () => {
+  const a = D.ALAT[2], w = kepalaAlat(a);
+  const t = e('table');
+  t.innerHTML = '<thead><tr><th style="width:30%">Nama pihak</th><th style="width:18%">Unsur</th><th style="width:14%">Kepentingan</th><th style="width:14%">Pengaruh</th><th>Kotak</th></tr></thead>';
+  const tb = e('tbody');
+  for (let i = 0; i < 8; i++) {
+    const tr = e('tr');
+    tr.innerHTML = '<td><input type="text" data-n="' + i + '"></td>'
+      + '<td><select data-u="' + i + '"><option value=""></option>'
+      + a.unsur.map(u => '<option>' + esc(u) + '</option>').join('') + '</select></td>'
+      + '<td><select data-k="' + i + '"><option value=""></option>' + [1,2,3,4,5].map(v => '<option>' + v + '</option>').join('') + '</select></td>'
+      + '<td><select data-p="' + i + '"><option value=""></option>' + [1,2,3,4,5].map(v => '<option>' + v + '</option>').join('') + '</select></td>'
+      + '<td class="kecil" data-r="' + i + '"></td>';
+    tb.appendChild(tr);
+  }
+  t.appendChild(tb); w.appendChild(bungkus(t));
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', '0 0 440 380'); svg.setAttribute('class', 'plot');
+  w.appendChild(svg);
+  const catatan = e('div', 'peringatan');
+  w.appendChild(catatan);
+
+  w.appendChild(e('h3', null, 'Empat kotak dan apa yang harus dilakukan'));
+  w.appendChild(tabelDari(null, a.kotak.map(r => ['<b>' + esc(r[0]) + '</b>', esc(r[1])])));
+
+  function kotakDari(k, p) {
+    if (!k || !p) return '';
+    return (k >= 4 ? 'Kepentingan tinggi' : 'Kepentingan rendah') + ' · ' + (p >= 4 ? 'pengaruh tinggi' : 'pengaruh rendah');
+  }
+  function hitung() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const L = 60, B = 320, W = 350, H = 260;
+    const g = (n, at) => { const x = document.createElementNS(svgNS, n); for (const k in at) x.setAttribute(k, at[k]); return x; };
+    svg.appendChild(g('rect', { x: L, y: B - H, width: W, height: H, fill: '#fff', stroke: '#C8D3E2' }));
+    svg.appendChild(g('rect', { x: L, y: B - H, width: W / 2, height: H / 2, fill: '#FBEFD6' }));
+    svg.appendChild(g('line', { x1: L + W / 2, y1: B - H, x2: L + W / 2, y2: B, stroke: '#C8D3E2', 'stroke-dasharray': '4 4' }));
+    svg.appendChild(g('line', { x1: L, y1: B - H / 2, x2: L + W, y2: B - H / 2, stroke: '#C8D3E2', 'stroke-dasharray': '4 4' }));
+    const tk = (x, y, s, o) => { const t = g('text', Object.assign({ x, y, fill: '#5A6472', 'font-size': 11, 'font-family': 'Calibri,sans-serif' }, o || {})); t.textContent = s; svg.appendChild(t); };
+    tk(L, B - H - 10, 'Kepentingan tinggi, pengaruh rendah — paling sering terlewat', { fill: '#8A6F16', 'font-size': 10.5 });
+    tk(L + W / 2, B + 20, 'Pengaruh →', { 'text-anchor': 'middle' });
+    const rot = g('text', { x: 18, y: B - H / 2, fill: '#5A6472', 'font-size': 11, 'font-family': 'Calibri,sans-serif', transform: 'rotate(-90 18 ' + (B - H / 2) + ')', 'text-anchor': 'middle' });
+    rot.textContent = 'Kepentingan →'; svg.appendChild(rot);
+    let adaKotak2 = 0;
+    for (let i = 0; i < 8; i++) {
+      const nama = w.querySelector('[data-n="' + i + '"]').value.trim();
+      const k = +w.querySelector('[data-k="' + i + '"]').value;
+      const p = +w.querySelector('[data-p="' + i + '"]').value;
+      w.querySelector('[data-r="' + i + '"]').textContent = kotakDari(k, p);
+      if (!nama || !k || !p) continue;
+      if (k >= 4 && p < 4) adaKotak2++;
+      const x = L + ((p - 1) / 4) * W, y = B - ((k - 1) / 4) * H;
+      svg.appendChild(g('circle', { cx: x, cy: y, r: 7, fill: (k >= 4 && p < 4) ? '#C9A227' : '#1F3864', stroke: '#fff', 'stroke-width': 2 }));
+      tk(x + 11, y + 4, nama.length > 16 ? nama.slice(0, 15) + '…' : nama, { fill: '#1F3864', 'font-size': 11 });
+    }
+    catatan.textContent = adaKotak2
+      ? adaKotak2 + ' pihak berada di kotak kepentingan tinggi–pengaruh rendah (bidang berwarna). Merekalah yang perlu saluran khusus. ' + a.catatan
+      : 'Belum ada pihak di kotak kepentingan tinggi–pengaruh rendah. Periksa lagi: benarkah masyarakat sekitar sudah punya pengaruh sebesar itu?';
+  }
+  w.addEventListener('input', hitung); w.addEventListener('change', hitung);
+  kakiAlat(w, a, () => {
+    let out = [];
+    for (let i = 0; i < 8; i++) {
+      const n = w.querySelector('[data-n="' + i + '"]').value.trim();
+      if (!n) continue;
+      out.push(n + ' | ' + w.querySelector('[data-u="' + i + '"]').value
+        + ' | kepentingan ' + w.querySelector('[data-k="' + i + '"]').value
+        + ' | pengaruh ' + w.querySelector('[data-p="' + i + '"]').value
+        + ' | ' + w.querySelector('[data-r="' + i + '"]').textContent);
+    }
+    return out.join('\n') || '(belum diisi)';
+  });
+  setTimeout(hitung, 0);
+  return w;
+});
+
+/* AB-4 — kalkulator daya dukung */
+daftar('AB-4', 'Alat bantu', 'AB-4 · Kalkulator daya dukung', () => {
+  const a = D.ALAT[3], w = kepalaAlat(a);
+  const r = e('div', 'kartu navy');
+  r.innerHTML = '<div class="hasil" style="color:#fff;text-align:center">' + esc(a.rumus) + '</div>';
+  w.appendChild(r);
+  const t = e('table');
+  t.innerHTML = '<thead><tr><th style="width:8%"></th><th style="width:26%">Variabel</th><th>Cara menetapkannya</th><th style="width:20%">Nilai</th></tr></thead>';
+  const tb = e('tbody');
+  a.variabel.forEach((v, i) => {
+    const tr = e('tr');
+    tr.innerHTML = '<td><b style="color:#8A6F16">' + esc(v[0]) + '</b></td><td><b>' + esc(v[1]) + '</b></td>'
+      + '<td class="kecil">' + esc(v[2]) + '</td>'
+      + '<td><input type="number" step="any" min="0" data-v="' + i + '"></td>';
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb); w.appendChild(bungkus(t));
+
+  w.appendChild(e('h3', null, 'Asumsi yang dipakai'));
+  w.appendChild(e('p', 'kecil redup', 'Wajib diisi. Hasil tidak muncul sebelum kolom ini terisi — dan itu memang maksudnya.'));
+  const as = e('textarea'); as.id = 'ab4-as'; as.placeholder = 'Contoh: luas efektif diukur dengan langkah kaki pada 12 Maret pukul 10.00; zona lindung mengikuti papan larangan di sisi utara; lama kunjungan rata-rata 95 menit dari pengamatan 40 pengunjung.';
+  w.appendChild(as);
+
+  const hasil = e('div', 'kartu krem pita');
+  hasil.innerHTML = '<div class="kicker">Daya dukung fisik</div><div class="hasil" id="ab4-h">—</div><div class="kecil redup" id="ab4-k" style="margin-top:.3rem"></div>';
+  w.appendChild(hasil);
+  w.appendChild(e('h3', null, 'Tiga tingkat daya dukung'));
+  w.appendChild(tabelDari(null, a.lanjut.map(r => ['<b>' + esc(r[0]) + '</b>', esc(r[1])])));
+
+  function hitung() {
+    const A = +w.querySelector('[data-v="0"]').value;
+    const Au = +w.querySelector('[data-v="1"]').value;
+    const Rf = +w.querySelector('[data-v="2"]').value;
+    const asum = w.querySelector('#ab4-as').value.trim();
+    const h = w.querySelector('#ab4-h'), k = w.querySelector('#ab4-k');
+    if (!asum) { h.textContent = '—'; k.textContent = 'Isi kolom asumsi lebih dahulu.'; return; }
+    if (!A || !Au || !Rf) { h.textContent = '—'; k.textContent = 'Ketiga variabel harus terisi dan lebih besar dari nol.'; return; }
+    const ddf = (A / Au) * Rf;
+    h.textContent = Math.round(ddf).toLocaleString('id-ID') + ' orang per hari';
+    k.textContent = 'Dibulatkan ke bawah menjadi ' + Math.floor(ddf).toLocaleString('id-ID')
+      + '. Angka ini batas ruang semata — batas ekologis dan batas sosial dihitung terpisah.';
+  }
+  w.addEventListener('input', hitung);
+  kakiAlat(w, a, () => 'A  = ' + w.querySelector('[data-v="0"]').value
+    + '\nAu = ' + w.querySelector('[data-v="1"]').value
+    + '\nRf = ' + w.querySelector('[data-v="2"]').value
+    + '\n\nAsumsi:\n' + w.querySelector('#ab4-as').value
+    + '\n\nDaya dukung fisik: ' + w.querySelector('#ab4-h').textContent);
+  setTimeout(hitung, 0);
+  return w;
+});
+
+/* AB-5 — GSTC */
+daftar('AB-5', 'Alat bantu', 'AB-5 · Evaluasi keberlanjutan GSTC', () => {
+  const a = D.ALAT[4], w = kepalaAlat(a);
+  ['A', 'B', 'C', 'D'].forEach(k => {
+    const c = e('div', 'kartu');
+    c.innerHTML = '<h3 style="margin:0 0 .45rem;font-size:1.02rem">' + esc(a.bagian[k]) + '</h3>';
+    a.kriteria[k].forEach(([kode, judul]) => {
+      const l = e('label', 'pilih');
+      l.innerHTML = '<input type="checkbox" data-g="' + k + '" value="' + kode + '"><span><b>' + kode + '</b> · ' + esc(judul) + '</span>';
+      c.appendChild(l);
+    });
+    w.appendChild(c);
+  });
+  const hasil = e('div', 'kartu navy pita');
+  hasil.innerHTML = '<div class="kicker">Kriteria terpilih</div><div class="hasil" style="color:#fff" id="ab5-h">0 kriteria</div><div id="ab5-k" style="margin-top:.4rem"></div>';
+  w.appendChild(hasil);
+  w.appendChild(e('h3', null, 'Padanan regulasi Indonesia yang paling sering terpakai'));
+  w.appendChild(tabelDari(null, a.padanan.map(r => ['<b>' + esc(r[0]) + '</b>', esc(r[1])])));
+
+  function hitung() {
+    const per = {}; let jml = 0;
+    ['A', 'B', 'C', 'D'].forEach(k => {
+      per[k] = [...w.querySelectorAll('input[data-g="' + k + '"]:checked')].map(x => x.value);
+      jml += per[k].length;
+    });
+    w.querySelector('#ab5-h').textContent = jml + ' kriteria';
+    const kosong = ['A', 'B', 'C', 'D'].filter(k => !per[k].length);
+    let pesan = '';
+    if (jml === 0) pesan = 'Pilih delapan sampai dua belas kriteria yang benar-benar mengena pada daya tarik wisata jangkar kalian.';
+    else {
+      const bagian = ['A', 'B', 'C', 'D'].map(k => k + ': ' + (per[k].join(', ') || '—')).join(' &nbsp;|&nbsp; ');
+      pesan = '<div class="kecil" style="margin-bottom:.4rem">' + bagian + '</div>';
+      if (jml < 8) pesan += '<b>Masih kurang ' + (8 - jml) + '.</b> Jumlah yang diminta delapan sampai dua belas.';
+      else if (jml > 12) pesan += '<b>Kelebihan ' + (jml - 12) + '.</b> Kemampuan memilih dengan alasan kuat itulah yang dinilai pertama pada rubrik D.2.';
+      else pesan += '<b>Jumlahnya sudah pas.</b>';
+      if (kosong.length) pesan += ' Bagian ' + kosong.join(', ') + ' belum terwakili — boleh dilanjutkan asal kalian bisa menjelaskan mengapa bagian itu tidak relevan.';
+    }
+    w.querySelector('#ab5-k').innerHTML = pesan;
+  }
+  w.addEventListener('change', hitung);
+  kakiAlat(w, a, () => ['A', 'B', 'C', 'D'].map(k =>
+    a.bagian[k] + '\n  ' + ([...w.querySelectorAll('input[data-g="' + k + '"]:checked')]
+      .map(x => x.value + ' ' + a.kriteria[k].find(c => c[0] === x.value)[1]).join('\n  ') || '(tidak ada)')
+  ).join('\n') + '\n\nJumlah: ' + w.querySelector('#ab5-h').textContent);
+  setTimeout(hitung, 0);
+  return w;
+});
+
+/* AB-6 — daftar periksa */
+daftar('AB-6', 'Alat bantu', 'AB-6 · Daftar periksa dokumen', () => {
+  const a = D.ALAT[5], w = kepalaAlat(a);
+  const c = e('div', 'kartu');
+  a.butir.forEach(([n, k], i) => {
+    const l = e('label', 'pilih');
+    l.innerHTML = '<input type="checkbox" data-p="' + i + '"><span><b>' + esc(n) + '</b><br><span class="kecil redup">' + esc(k) + '</span></span>';
+    c.appendChild(l);
+  });
+  w.appendChild(c);
+  const hasil = e('div', 'kartu navy pita');
+  hasil.innerHTML = '<div class="kicker">Kelengkapan</div><div class="hasil" style="color:#fff" id="ab6-h">0 dari ' + a.butir.length + '</div>'
+    + '<div class="bar" style="background:#3B5580"><i id="ab6-bar"></i></div><div id="ab6-k" class="kecil"></div>';
+  w.appendChild(hasil);
+
+  function hitung() {
+    const c = w.querySelectorAll('input[data-p]:checked').length;
+    const n = a.butir.length;
+    w.querySelector('#ab6-h').textContent = c + ' dari ' + n;
+    w.querySelector('#ab6-bar').style.width = (c / n * 100) + '%';
+    const kurang = a.butir.filter((_, i) => !w.querySelector('[data-p="' + i + '"]').checked).map(x => x[0]);
+    w.querySelector('#ab6-k').textContent = c === n
+      ? 'Lengkap. Dokumen siap diuji.'
+      : 'Belum lengkap: ' + kurang.join('; ') + '.';
+  }
+  w.addEventListener('change', hitung);
+  kakiAlat(w, a, () => a.butir.map((x, i) =>
+    (w.querySelector('[data-p="' + i + '"]').checked ? '[v] ' : '[ ] ') + x[0]).join('\n')
+    + '\n\n' + w.querySelector('#ab6-h').textContent);
+  setTimeout(hitung, 0);
+  return w;
+});
+
+/* AB-7 — pemilih model DMO */
+daftar('AB-7', 'Alat bantu', 'AB-7 · Pemilih model DMO', () => {
+  const a = D.ALAT[6], w = kepalaAlat(a);
+  a.tanya.forEach((t, i) => {
+    const c = e('div', 'kartu');
+    c.innerHTML = '<h3 style="margin:0 0 .4rem;font-size:1rem">' + (i + 1) + '. ' + esc(t[0]) + '</h3>';
+    t[1].forEach(([teks, kode], j) => {
+      const l = e('label', 'pilih');
+      l.innerHTML = '<input type="radio" name="dmo' + i + '" value="' + kode + '"><span>' + esc(teks) + '</span>';
+      c.appendChild(l);
+    });
+    w.appendChild(c);
+  });
+  const hasil = e('div', 'kartu navy pita');
+  hasil.innerHTML = '<div class="kicker">Dugaan model</div><div class="hasil" style="color:#fff" id="dmo-h">Belum ada jawaban</div><div id="dmo-k" style="margin-top:.4rem"></div>';
+  w.appendChild(hasil);
+  w.appendChild(e('h3', null, 'Lima model dan catatan penulis'));
+  w.appendChild(tabelDari(['Model', 'Cocok untuk', 'Catatan penulis'],
+    ['gov', 'ppp', 'private', 'community', 'all'].map(k =>
+      ['<b>' + esc(a.model[k][0]) + '</b>', esc(a.model[k][1]), esc(a.model[k][2])])));
+
+  function hitung() {
+    const jml = {};
+    a.tanya.forEach((_, i) => {
+      const r = w.querySelector('input[name="dmo' + i + '"]:checked');
+      if (r) jml[r.value] = (jml[r.value] || 0) + 1;
+    });
+    const total = Object.values(jml).reduce((x, y) => x + y, 0);
+    const h = w.querySelector('#dmo-h'), k = w.querySelector('#dmo-k');
+    if (!total) { h.textContent = 'Belum ada jawaban'; k.textContent = ''; return; }
+    const maks = Math.max(...Object.values(jml));
+    const puncak = Object.keys(jml).filter(x => jml[x] === maks);
+    h.textContent = puncak.map(x => a.model[x][0]).join(' / ');
+    if (puncak.length > 1) {
+      k.innerHTML = '<span class="kecil">Dua model atau lebih sama kuat. Itu lazim pada destinasi yang sedang berpindah tangan atau yang pengelolaannya memang terbagi — tuliskan keduanya beserta buktinya.</span>';
+    } else {
+      const m = a.model[puncak[0]];
+      k.innerHTML = '<div class="kecil"><b>Cocok untuk.</b> ' + esc(m[1]) + '<br><b>Catatan penulis.</b> ' + esc(m[2]) + '</div>';
+    }
+  }
+  w.addEventListener('change', hitung);
+  kakiAlat(w, a, () => a.tanya.map((t, i) => {
+    const r = w.querySelector('input[name="dmo' + i + '"]:checked');
+    return (i + 1) + '. ' + t[0] + '\n   ' + (r ? t[1].find(o => o[1] === r.value)[0] : '(belum dijawab)');
+  }).join('\n') + '\n\nDugaan model: ' + w.querySelector('#dmo-h').textContent);
+  setTimeout(hitung, 0);
+  return w;
+});
+
+/* ══ BANK SOAL ══ */
+daftar('soal', 'Bank soal', 'Bank soal 39 butir', () => {
+  const w = e('div');
+  w.appendChild(judulHalaman('Uji pemahaman', 'Bank soal 39 butir',
+    'Pilih satu jawaban. Pembahasan muncul setelah dijawab, dan jawaban tidak bisa diubah — persis seperti kuis di kelas.'));
+
+  const papan = e('div', 'papan');
+  const pilihBlok = e('select');
+  pilihBlok.innerHTML = '<option value="0">Semua blok (39 butir)</option>'
+    + D.BLOK.map(b => '<option value="' + b.no + '">Blok ' + b.no + ' · ' + esc(b.mg) + ' (' + D.SOAL.filter(q => q.bl === b.no).length + ' butir)</option>').join('');
+  pilihBlok.style.maxWidth = '420px';
+  const skor = e('div', 'kecil redup');
+  papan.appendChild(pilihBlok); papan.appendChild(skor);
+  w.appendChild(papan);
+  const wadah = e('div');
+  w.appendChild(wadah);
+
+  let benar = 0, dijawab = 0;
+  function gambar() {
+    wadah.innerHTML = ''; benar = 0; dijawab = 0; perbarui();
+    const bl = +pilihBlok.value;
+    D.SOAL.filter(q => !bl || q.bl === bl).forEach(q => {
+      const s = e('div', 'soal');
+      s.innerHTML = '<div class="tanya">' + q.no + '. ' + esc(q.s) + ' <span class="kecil redup">[' + q.rn + ']</span></div>';
+      const huruf = ['A', 'B', 'C', 'D'];
+      q.p.forEach((o, i) => {
+        const l = e('div', 'opsi');
+        l.innerHTML = '<b>' + huruf[i] + '.</b> ' + esc(o);
+        l.onclick = () => {
+          if (s.dataset.jawab) return;
+          s.dataset.jawab = '1'; dijawab++;
+          const betul = huruf[i] === q.k;
+          if (betul) benar++;
+          [...s.querySelectorAll('.opsi')].forEach((x, j) => {
+            x.classList.add('mati');
+            if (huruf[j] === q.k) x.classList.add('benar');
+            else if (j === i) x.classList.add('salah');
+          });
+          const b = e('div', 'bahas', '<b>Kunci ' + q.k + '.</b> ' + esc(q.b));
+          s.appendChild(b);
+          perbarui();
+        };
+        s.appendChild(l);
+      });
+      wadah.appendChild(s);
+    });
+  }
+  function perbarui() {
+    const n = wadah.querySelectorAll('.soal').length || 0;
+    skor.textContent = dijawab ? 'Terjawab ' + dijawab + ' dari ' + n + ' · benar ' + benar
+      + ' · nilai ' + Math.round(benar / dijawab * 100) : '';
+  }
+  pilihBlok.onchange = gambar;
+  gambar();
+
+  const d = e('div', 'deret');
+  const b1 = e('button', 'tombol', 'Ulangi');
+  b1.onclick = gambar;
+  d.appendChild(b1);
+  w.appendChild(d);
+
+  const k = e('div', 'kartu krem pita');
+  k.innerHTML = '<p style="margin:0">Butir yang sama tersedia dalam bentuk siap unggah pada berkas <b>Bank-Soal-Pengelolaan-Destinasi-Wisata.xlsx</b>, lengkap dengan lembar impor Quizizz dan Kahoot serta lembar nilai yang menghitung sendiri.</p>';
+  w.appendChild(k);
+  return w;
+});
+
+/* ══ PUSTAKA ══ */
+daftar('pustaka', 'Bank soal', 'Daftar pustaka', () => {
+  const w = e('div');
+  w.appendChild(judulHalaman('Rujukan', 'Daftar pustaka',
+    'Penomoran ini sama dengan penomoran pada RPS Revisi 004, modul ajar, monograf, deck materi ajar, panduan proyek, dan instrumen penilaian.'));
+  const ol = e('ol', 'num');
+  PUSTAKA.forEach(([, t]) => ol.appendChild(e('li', null, t)));
+  w.appendChild(ol);
+  const k = e('div', 'kartu krem pita');
+  k.innerHTML = '<p style="margin:0 0 .5rem"><b>Catatan penomoran halaman.</b> Morrison dan Cooper dirujuk sampai bab. Artikel Buhalis dalam berkas kelas berupa naskah terima tanpa penomoran jurnal, sehingga dirujuk sampai bagian atau nomor tabel.</p>'
+    + '<p style="margin:0"><b>Masa berlaku.</b> Perda Kepri 2/2012 berlaku 2012–2022 dan Perda Bintan 4/2015 berlaku 2015–2025. Keduanya sudah lewat masa berlaku dan tetap dipakai karena belum ada penggantinya.</p>';
+  w.appendChild(k);
+  return w;
+});
+
+/* ── perutean ── */
+const utama = document.getElementById('utama');
+const nav = document.getElementById('nav');
+const merek = e('div', 'merek', '<b>Media Pembelajaran Digital</b><span>PENGELOLAAN DESTINASI WISATA · PW102</span>');
+nav.appendChild(merek);
+let kelSekarang = '';
+HALAMAN.forEach(h => {
+  if (h.kel !== kelSekarang) { kelSekarang = h.kel; nav.appendChild(e('div', 'kel', h.kel)); }
+  const b = e('button', null, h.nama);
+  b.dataset.id = h.id;
+  b.onclick = () => buka(h.id);
+  nav.appendChild(b);
+});
+const dibuat = {};
+function buka(id) {
+  if (!dibuat[id]) {
+    const h = HALAMAN.find(x => x.id === id);
+    const d = h.buat();
+    d.className = 'halaman';
+    d.id = 'hal-' + id;
+    utama.appendChild(d);
+    dibuat[id] = d;
+  }
+  [...utama.children].forEach(c => c.classList.remove('tampil'));
+  dibuat[id].classList.add('tampil');
+  [...nav.querySelectorAll('button')].forEach(b => b.classList.toggle('aktif', b.dataset.id === id));
+  window.scrollTo(0, 0);
+  try { history.replaceState(null, '', '#' + id); } catch (x) {}
+}
+const awal = (location.hash || '').slice(1);
+buka(HALAMAN.some(h => h.id === awal) ? awal : 'beranda');
+</script>
+</body>
+</html>
